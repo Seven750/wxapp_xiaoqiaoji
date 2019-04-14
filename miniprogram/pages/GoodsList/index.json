@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "货物列表",
+  "usingComponents": {
+    "wux-index": "../../miniprogram_npm/wux-weapp/index/index",
+    "wux-index-item": "../../miniprogram_npm/wux-weapp/index-item/index"
+  }
+}
