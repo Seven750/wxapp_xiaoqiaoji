@@ -1,4 +1,4 @@
-// pages/index/index.js
+import { $wuxToptips } from '../../miniprogram_npm/wux-weapp/index'
 const app = getApp()
 Page({
 
@@ -9,12 +9,14 @@ Page({
     openid:"",
     types: ['个', '斤', '100个','千克', '吨',"打","平方米","米"],
     typeIndex: 3,
-    files: [],
+    Files: [],
     localfiles: [],
     GoodName:"",
     GoodPrice:"",
     GoodDescription:"",
-    GoodReserve:""
+    GoodReserve:"",
+    GoodUnit: "千克",
+    savestatus: false
   },
 
   /**
@@ -77,11 +79,13 @@ Page({
 
   },
   pickerChange(e) {
+    console.log(e)
     const { value } = e.detail
     const { model } = e.currentTarget.dataset
-
+    const unit = this.data.types[value]
     this.setData({
       [model]: value,
+      GoodUnit:unit
     })
   },
   chooseImage: function (e) {
@@ -91,12 +95,13 @@ Page({
       sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
-        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
+        console.log(res)
         const path = res.tempFilePaths[0];
         const cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/)
-        var json={imageID:"",src:cloudPath,fileID:""}
+        var json={src:cloudPath,fileID:""}
         that.setData({
-          files:that.data.files.concat(json),
+          Files:that.data.Files.concat(json),
           localfiles:that.data.localfiles.concat(res.tempFilePaths)
         });
       }
@@ -120,7 +125,7 @@ Page({
         if (res.confirm) {
           this.setData({
             //类似于java中的lambda表达式
-            files: that.data.files.filter((n) =>n.src!==cloudPath),
+            Files: that.data.Files.filter((n) =>n.src!==cloudPath),
             localfiles: that.data.localfiles.filter(function (localfiles){
               return localfiles != e.currentTarget.id;
             } )
@@ -171,74 +176,190 @@ Page({
   //添加到数据库当中
   onAdd: function () {
     var that=this;
-    const db = wx.cloud.database();
-    const length=that.data.localfiles.length;
-    for(var j=0;j<length;j++)
+    if(that.data.GoodName==""||that.data.GoodName==null)
     {
-      var cloudPath=that.data.files[j].src;
-      var filePath=that.data.localfiles[j];
-      //作为一个变量，需要拼接字符串来完成
-      var fileID="files["+j+"].fileID"; 
-      var imageID="files["+j+"].imageID";
-      wx.cloud.uploadFile({
-        cloudPath,
-        filePath,
-        success: res => {
-          console.log('[上传文件] 成功：', res);
-          that.setData({
-            [fileID] :res.fileID
-          })
-          // wx.navigateTo({
-          //   url: '../storageConsole/storageConsole'
-          // })
-        },
-        fail: e => {
-          console.error('[上传文件] 失败：', e)
-          wx.showToast({
-            icon: 'none',
-            title: '图片上传失败',
-          })
-        },
-        complete: () => {
-          wx.hideLoading()
-          db.collection('Goods').add({
-            data: {
-              GoodName: that.data.GoodName,
-              GoodPrice: that.data.GoodPrice,
-              GoodDescription: that.data.GoodPrice,
-              GoodReserve: that.data.GoodReserve,
-              files: that.data.files
-            },
+      $wuxToptips().show({
+        text: '货物名不能为空',
+        duration: 2000,
+        success() { },
+      })
+      return;
+    }
+    if (that.data.GoodPrice == "" || that.data.GoodPrice == null) {
+      $wuxToptips().show({
+        text: '货物单价不能为空',
+        duration: 2000,
+        success() { },
+      })
+      return;
+    }
+    const db = wx.cloud.database();
+    this.setData({
+      savestatus:true
+    },()=>{
+      wx.showLoading({
+        title: '正在保存',
+      })
+      console.log(that.data.localfiles)
+      const length = that.data.localfiles.length;
+      if(length==0)
+      {
+        //如果用户没有上传图片，那么就直接上传货物信息
+        console.log(that.data.Files)
+        db.collection('Goods').add({
+          data: {
+            GoodName: that.data.GoodName,
+            GoodPrice: that.data.GoodPrice,
+            GoodDescription: that.data.GoodPrice,
+            GoodReserve: that.data.GoodReserve,
+            GoodUnit: that.data.GoodUnit,
+            Svolume: "",
+            Pvolume: "",
+            Files: that.data.Files
+          },
+          success: res => {
+            // 在返回结果中会包含新创建的记录的 _id 可以当作索引
+            this.setData({
+              counterId: res._id,
+              count: 1
+            })
+            wx.showToast({
+              title: '新增记录成功',
+            })
+            console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
+          },
+          fail: err => {
+            that.openAlert("新增记录失败")
+            that.setData({
+              savestatus: true
+            })
+            console.error('[数据库] [新增记录] 失败：', err)
+          }
+        })
+        wx.reLaunch({
+          url: '../GoodsList/index',
+          // success: function (e) {
+          //   const page = getCurrentPages().pop();
+          //   console.log(page)
+          //   if (page == undefined || page == null)
+          //     return;
+          //   page.onLoad()
+          // }
+        })
+      //下面的for循环就不会执行
+      }
+      else
+      {
+        //记录循环已经执行了的次数
+        let filestimes = 0
+        for (let j = 0; j < length; j++) {
+          
+          //上传的文件大小不同，会异步处理上传，文件越大的上传越慢，但是在大文件的上传同时，小文件已经上传完毕了
+          const cloudPath = that.data.Files[j].src;
+          const filePath = that.data.localfiles[j];
+          //作为一个变量，需要拼接字符串来完成
+          wx.cloud.uploadFile({
+            cloudPath,
+            filePath,
             success: res => {
-              // 在返回结果中会包含新创建的记录的 _id 可以当作索引
-              this.setData({
-                counterId: res._id,
-                count: 1
+              console.log('[上传第' + j + '文件] 成功：', res);
+              const fID = 'Files[' + j + '].fileID'
+              console.log("fID", fID)
+              that.setData({
+                [fID]: res.fileID
               })
-              wx.showToast({
-                title: '新增记录成功',
-              })
-              console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
+              // wx.navigateTo({
+              //   url: '../GoodsList/index'
+              // })
             },
-            fail: err => {
-              wx.showToast({
-                icon: 'none',
-                title: '新增记录失败'
-              })
-              console.error('[数据库] [新增记录] 失败：', err)
+            fail: e => {
+              //需要删除之前上传过的文件
+              console.error('[上传第' + j + '文件] 失败：', e)
+              that.openAlert('[上传第' + j + '文件] 失败')
+
+            },
+            complete:result =>{
+              filestimes = filestimes + 1;
+              console.log("filestimes", filestimes)
+              if (filestimes == length) {
+                console.log("11111111111", that.data.Files)
+                db.collection('Goods').add({
+                  data: {
+                    GoodName: that.data.GoodName,
+                    GoodPrice: that.data.GoodPrice,
+                    GoodDescription: that.data.GoodPrice,
+                    GoodReserve: that.data.GoodReserve,
+                    GoodUnit: that.data.GoodUnit,
+                    Svolume: "",
+                    Pvolume: "",
+                    Files: that.data.Files
+                  },
+                  success: res => {
+                    // 在返回结果中会包含新创建的记录的 _id 可以当作索引
+                    this.setData({
+                      counterId: res._id,
+                      count: 1
+                    })
+                    wx.showToast({
+                      title: '新增记录成功',
+                    })
+                    console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
+                  },
+                  fail: err => {
+                    that.openAlert("新增记录失败")
+                    that.setData({
+                      savestatus: true
+                    })
+                    console.error('[数据库] [新增记录] 失败：', err)
+                  }
+                })
+                wx.reLaunch({
+                  url: '../GoodsList/index',
+                  // success: function (e) {
+                  //   const page = getCurrentPages().pop();
+                  //   console.log(page)
+                  //   if (page == undefined || page == null)
+                  //     return;
+                  //   page.onLoad()
+                  // }
+                })
+              }
+              else
+                return
             }
           })
+          
         }
-      })
-    }
+      }
+        // wx.hideLoading()
+        
+    })
   },
-  SaveGood:function(e){
+  openAlert: function (message) {
+    const msg = message;
+    wx.showModal({
+      content: msg,
+      showCancel: false,
+      success: function (res) {
+        if (res.confirm) {
+          console.log('用户点击确定')
+          wx.navigateBack({
+            delta:1
+          })
+        }
+      }
+    });
+  },
+  backgoodlist:function(e){
     // console.log(this.data.GoodName);
     // console.log(this.data.GoodPrice);
     // console.log(this.data.GoodDescription);
     // console.log(this.data.GoodReserve);
-    console.log(this.data.files);
-    console.log(this.data.localfiles)
+    // console.log(this.data.files);
+    // console.log(this.data.localfiles)
+    wx.navigateBack({
+      delta:1
+    })
   }
 
 })

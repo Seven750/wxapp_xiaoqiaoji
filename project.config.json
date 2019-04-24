@@ -9,7 +9,7 @@
 		"newFeature": true,
 		"nodeModules": true,
 		"autoAudits": false,
-		"uglifyFileName": true
+		"uglifyFileName": false
 	},
 	"appid": "wx076d601fb2c4a6d3",
 	"projectname": "X1",
