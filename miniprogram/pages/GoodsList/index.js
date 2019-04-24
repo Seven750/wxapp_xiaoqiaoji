@@ -1,4 +1,5 @@
-import pinyin from "../../miniprogram_npm/pinyin4js/index.js"
+
+const pinyin = require("../../miniprogram_npm/pinyin4js/index")
 const app = getApp()
 const goodsname=[]
 

@@ -1,7 +1,7 @@
 /**app.wxss**/
 
-@import 'miniprogram_npm/wux-weapp/styles/weui.wxss';
-@import 'miniprogram_npm/wux-weapp/styles/skyvow.wxss';
+@import 'style/weui.wxss';
+@import 'style/skyvow.wxss';
 @import 'style/weui-uploader.wxss';
 .container {
   display: flex;

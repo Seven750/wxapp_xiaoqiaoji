@@ -19,3 +19,14 @@
 .demo-item:last-child:after {
     display: none;
 }
+.weui-tab__content {
+	height: 100%;
+	padding-bottom: 0;
+}
+.footer_tabbar{
+  margin-bottom: 0;
+  position:fixed;
+  bottom:.52em;
+  left:0;
+  right:0;
+}

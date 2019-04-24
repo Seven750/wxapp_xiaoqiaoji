@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "添加订单信息",
+  "usingComponents": {
+    "i-button": "../../dist/button/index",
+    "wux-cell-group": "../../miniprogram_npm/wux-weapp/cell-group/index",
+    "wux-cell": "../../miniprogram_npm/wux-weapp/cell/index",
+    "wux-input": "../../miniprogram_npm/wux-weapp/input/index",
+    "wux-fab-button": "../../miniprogram_npm/wux-weapp/fab-button/index",
+    "wux-upload": "../../miniprogram_npm/wux-weapp/upload/index",
+    "wux-textarea": "../../miniprogram_npm/wux-weapp/textarea/index",
+    "wux-swipe-action": "../../miniprogram_npm/wux-weapp/swipe-action/index",
+    "wux-select": "../../miniprogram_npm/wux-weapp/select/index"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "货物信息",
+  "usingComponents": {
+    "i-button": "../../dist/button/index",
+    "wux-cell-group": "../../miniprogram_npm/wux-weapp/cell-group/index",
+    "wux-cell": "../../miniprogram_npm/wux-weapp/cell/index",
+    "wux-input": "../../miniprogram_npm/wux-weapp/input/index",
+    "wux-fab-button": "../../miniprogram_npm/wux-weapp/fab-button/index",
+    "wux-row": "../../miniprogram_npm/wux-weapp/row/index",
+    "wux-col": "../../miniprogram_npm/wux-weapp/col/index",
+    "wux-upload": "../../miniprogram_npm/wux-weapp/upload/index",
+    "wux-textarea": "../../miniprogram_npm/wux-weapp/textarea/index"
+  }
+}

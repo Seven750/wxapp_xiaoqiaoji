@@ -1,11 +1,18 @@
-const app =getApp()
+//引入全局对象
+const app = getApp()
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    avatarUrl:"../../images/Cover.png"
+    avatarUrl: '../../images/user-unlogin.png',
+    userInfo: {},
+    logged: false,
+    takeSession: false,
+    requestResult: '',
+    imgUrl: "",
+    username: "点击登陆"
   },
 
   /**
@@ -18,15 +25,12 @@ Page({
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             success: res => {
-              // app.globalData.username = res.userInfo.nickName;
-              app.globalData.userInfo = res.userInfo
-              wx.switchTab({
-                url: '../Person/index'
+              console.log(res)
+              this.setData({
+                username:res.userInfo.nickName,
+                avatarUrl: res.userInfo.avatarUrl,
+                userInfo: res.userInfo
               })
-              // this.setData({
-              //   username: res.userInfo.nickName,
-              //   userInfo: res.userInfo
-              // })
             }
           })
         }
@@ -34,24 +38,16 @@ Page({
     })
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-    
-  },
+  
   onGetUserInfo: function (e) {
     this.onGetOpenid();
     if (!this.data.logged && e.detail.userInfo) {
-      wx.setStorage({
-        key: "logged",
-        data:true
+      this.setData({
+        username:e.detail.userInfo.nickName,
+        logged: true,
+        avatarUrl: e.detail.userInfo.avatarUrl,
+        userInfo: e.detail.userInfo
       })
-      // this.setData({
-      //   username: e.detail.userInfo.nickName,
-      //   logged: true,
-      //   userInfo: e.detail.userInfo
-      // })
     }
   },
   onGetOpenid: function () {
@@ -62,9 +58,6 @@ Page({
       success: res => {
         console.log('[云函数] [login] user openid: ', res.result.openid);
         app.globalData.openid = res.result.openid;
-        wx.switchTab({
-          url: '../Person/index'
-        })
       },
       fail: err => {
         console.error('[云函数] [login] 调用失败', err)
@@ -74,4 +67,5 @@ Page({
       }
     })
   },
+ 
 })

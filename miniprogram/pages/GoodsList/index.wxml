@@ -1,5 +1,10 @@
-<wux-index height="100%" bind:change="onChange">
+ <wux-index height="100%" bind:change="onChange" wx:if="{{status}}">
     <wux-index-item wx:for="{{ alphabet }}" wx:key="" name="{{ item.initial }}">
-        <view class="demo-item" wx:for="{{ item.cells }}" wx:for-item="cell" wx:key="" id="{{index}}" bindtap='onselect'>{{ cell }}</view>
+        <view class="demo-item" wx:for="{{ item.cells }}" wx:for-item="cell" wx:key="" id="{{cell}}" bindtap='onselect'>{{ cell }}</view>
     </wux-index-item>
 </wux-index>
+<view class="weui-tab__content" wx:if="{{!status}}">
+  <wux-prompt visible="{{true}}" title="{{ msg1.title }}" text="{{ msg1.text }}" />
+</view>
+<wux-fab-button position="bottomRight" theme="balanced" direction="vertical" bind:change="onClick" actionRotate="{{actionRotate}}"/>
+

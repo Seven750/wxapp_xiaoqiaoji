@@ -1,5 +1,4 @@
-/* pages/index/index.wxss */
-.footer_button{
+.footer_tabbar{
   margin-bottom: 0;
   position:fixed;
   bottom:.52em;

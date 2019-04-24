@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "订单列表",
+  "usingComponents": {
+    "wux-prompt": "../../miniprogram_npm/wux-weapp/prompt/index",
+    "wux-fab-button": "../../miniprogram_npm/wux-weapp/fab-button/index"
+  }
+}

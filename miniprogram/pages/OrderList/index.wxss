@@ -1,0 +1,21 @@
+.footer_tabbar{
+  margin-bottom: 0;
+  position:fixed;
+  bottom:.52em;
+  left:0;
+  right:0;
+}
+.weui-tab__content {
+	height: 100%;
+	padding-bottom: 0;
+}
+.searchbar-result{
+    margin-top: 0;
+    font-size: 14px;
+}
+.searchbar-result:before{
+    display: none;
+}
+.weui-cell{
+    padding: 12px 15px 12px 35px;
+}
