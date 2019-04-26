@@ -80,7 +80,6 @@ Page({
                   //如果某个字母开头的没有，则隐藏该首字母
                   return;
                 }
-                console.log("cells", cells)
               }
             })
 
@@ -100,12 +99,12 @@ Page({
   onselect:function(e){
     console.log(e)
     wx.navigateTo({
-      url: '../ModifyGoods/index?GoodName='+e.currentTarget.id,
+      url: '../../pages_good/pages/ModifyGoods/index?GoodName='+e.currentTarget.id,
     })
   },
   onClick(e) {
     wx.navigateTo({
-      url: '../AddGoods/index',
+      url: '../../pages_good/pages/AddGoods/index',
     })
   },
  

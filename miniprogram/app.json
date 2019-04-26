@@ -1,18 +1,49 @@
 {
   "pages": [
-    "pages/GoodsList/index",
-    "pages/AddPurchaseOrders/index",
     "pages/Login/index",
+    "pages/GoodsList/index",
+    
     "pages/Person/index",
-    
-    "pages/OrderList/index",
-    
-    "pages/AddSalesOrders/index",
-    "pages/AddGoods/index",
-    "pages/ModifyGoods/index"
-    
-    
+    "pages/OrderList/index"
   ],
+  "subpackages": [
+    {
+      "root": "pages_good",
+      "name":"good",
+      "pages": [
+        "pages/AddGoods/index",
+        "pages/ModifyGoods/index"
+      ]
+    },
+    {
+      "root": "pages_order",
+      "name": "order",
+      "pages": [
+        "pages/AddPurchaseOrders/index",
+        "pages/AddSalesOrders/index"
+      ]
+    },
+    {
+      "root": "pages_charts",
+      "name": "charts",
+      "pages": [
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/OrderList/index": {
+      "network": "all",
+      "packages": [
+        "pages_order"
+      ]
+    },
+    "pages/GoodsList/index": {
+      "network": "all",
+      "packages": [
+        "pages_good"
+      ]
+    }
+  },
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",

@@ -41,11 +41,11 @@ Page({
     console.log('onClick', e.detail)
     if(e.detail.index==0)
       wx.navigateTo({
-        url: '../AddPurchaseOrders/index',
+        url: '../../pages_order/pages/AddPurchaseOrders/index',
       })
     else if(e.detail.index==1)
       wx.navigateTo({
-        url: '../AddSalesOrders/index',
+        url: '../../pages_order/pages/AddSalesOrders/index',
       })
     else
       console.log("no page")

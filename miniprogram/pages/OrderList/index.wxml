@@ -1,6 +1,10 @@
-<view class="page">
+<wux-fab-button position="bottomRight" theme="balanced" direction="vertical" bind:change="fabonChange" bind:click="fabonClick"actionRotate="{{true}}"buttons="{{ buttons }}"/>
+<view class="content" wx:if="{{!status}}">
+    <wux-prompt visible="{{ true}}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}" />
+</view>
+<view class="page" wx:if="{{status}}">
     <view class="page__bd">
-        <view class="weui-search-bar">
+        <view class="weui-search-bar" >
             <view class="weui-search-bar__form">
                 <view class="weui-search-bar__box">
                     <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
@@ -21,26 +25,9 @@
                     <view>实时搜索文本</view>
                 </view>
             </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>实时搜索文本</view>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>实时搜索文本</view>
-                </view>
-            </navigator>
-            <navigator url="" class="weui-cell" hover-class="weui-cell_active">
-                <view class="weui-cell__bd">
-                    <view>实时搜索文本</view>
-                </view>
-            </navigator>
         </view>
+        
     </view>
 </view>
-<view class="weui-tab__content" wx:if="{{!status}}">
-    <wux-prompt visible="{{ true}}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}" />
-</view>
 
-<wux-fab-button position="bottomRight" theme="balanced" direction="vertical" bind:change="fabonChange" bind:click="fabonClick"actionRotate="{{true}}"buttons="{{ buttons }}"/>
+
