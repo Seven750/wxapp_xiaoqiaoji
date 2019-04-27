@@ -1,33 +1,30 @@
+<wux-toptips id="wux-toptips" />
+<wux-select id="wux-select" />
 <view class='page'>
   <view class='page_body' disabled="true">
     <wux-cell-group>
             <wux-cell>
-                <wux-input label="货物名称" bind:change='GetGoodName'disabled="{{status}}" value='{{GoodName}}' controlled = "true"/>
+                <wux-input label="货物名称" bind:blur='GetGoodName'disabled="{{status}}" value='{{GoodName}}' controlled = "true"/>
             </wux-cell>
-            <view class="weui-cells weui-cells_after-title" wx:if="{{!status}}">
-              <view class="weui-cell weui-cell_select">
-                <view class="weui-cell__hd weui-cell__hd_in-select-after">
-                    <view class="weui-label">货物单位</view>
-                </view>
-                <view class="weui-cell__bd">
-                    <picker bindchange="pickerChange" data-model="typeIndex" value="{{ typeIndex }}" range="{{ types }}" disabled="{{status}}">
-                        <view class="weui-select weui-select_in-select-after">{{ types[typeIndex] }}</view>
-                    </picker>
-                </view>
-              </view>
-            </view>
+            <wux-cell wx:if="{{!status}}" title="货物单位" extra="{{ GoodUnit }}" is-link bind:click="onchooseUnit"></wux-cell>
             <wux-cell>
-                <wux-input label="货物单价" type='digit' bind:change="GetGoodPrice" disabled="{{status}}" value='{{GoodPrice}}' controlled = "true">
-                 <view slot="footer" wx:if="{{!status}}">￥/{{ types[typeIndex] }}</view>
+                <wux-input label="销售单价" type='digit' bind:blur="GetGoodSalPrice" disabled="{{status}}" value='{{GoodPrice}}' controlled = "true">
+                 <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit }}</view>
                  <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
                 </wux-input>
             </wux-cell>
             <wux-cell>
-                <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:change="GetGoodsDescription" disabled="{{status}}" value='{{GoodDescription}}' controlled = "true"/>
+                <wux-input label="进货单价" type='digit' bind:blur="GetGoodPurPrice" disabled="{{status}}" value='{{GoodPrice}}' controlled = "true">
+                 <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit}}</view>
+                 <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
+                </wux-input>
             </wux-cell>
             <wux-cell>
-                <wux-input label="目前货物库存" type='number' bind:change="GetGoodReserve" disabled="{{status}}" value='{{GoodReserve}}' controlled = "true">
-                 <view slot="footer" wx:if="{{!status}}">{{ types[typeIndex] }}</view>
+                <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription" disabled="{{status}}" value='{{GoodDescription}}' controlled = "true"/>
+            </wux-cell>
+            <wux-cell>
+                <wux-input label="目前货物库存" type='number' bind:blur="GetGoodReserve" disabled="{{status}}" value='{{GoodReserve}}' controlled = "true">
+                 <view slot="footer" wx:if="{{!status}}">{{ GoodUnit }}</view>
                  <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
                 </wux-input>
             </wux-cell>

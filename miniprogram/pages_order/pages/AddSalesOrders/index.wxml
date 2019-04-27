@@ -5,10 +5,10 @@
   <view class='page_bd'>
     <wux-cell-group title="填写订单信息">
     <wux-cell >
-      <wux-input label="订单号" type='text' bind:change="GetorderID" value='{{orderID}}' controlled = "true"/>
+      <wux-input label="订单号" type='text' bind:blur="GetorderID" value='{{orderID}}' controlled = "true"/>
     </wux-cell>
     <wux-cell>
-      <wux-input label="客户名" type='text' bind:change="Getclientname" value='{{clientname}}' controlled = "true"/>
+      <wux-input label="客户名" type='text' bind:blur="Getclientname" value='{{clientname}}' controlled = "true"/>
     </wux-cell>
     </wux-cell-group>
     <wux-cell-group title="填写货物信息" >
@@ -21,20 +21,56 @@
       </wux-cell> 
       </block>
     </wux-cell-group>
-    <wux-cell-group title="结账类型" label="总金额：{{total_amount}} 元">
+    <wux-cell-group title="备注" >
+      <wux-cell>
+          <wux-input label="订单描述" placeholder="最多输入一百个字"  maxlength="100" confirm-type="下一步" bind:blur="GetOrderDescription" controlled = "true" />
+      </wux-cell>
+      <wux-cell title="订金/定金/押金">
+          <wux-switch name="balanced" slot="footer" color="balanced" value="{{ deposit_status }}" bind:change="onChangedep_status" />
+      </wux-cell>
+      <wux-cell wx:if="{{deposit_status}}">
+        <wux-input label="预付金额" type='text' bind:blur="Getdepositnum"  controlled = "true" error="{{depositnum_status}}" placeholder="不能大于该订单总金额"/>
+    </wux-cell>
+      <wux-cell title="上传图片">
+          <wux-switch name="balanced" slot="footer" color="balanced" value="{{ up_pic_status }}" bind:change="onChangepic_status" />
+      </wux-cell>
+      <wux-cell wx:if="{{up_pic_status}}">
+        <view class="weui-uploader">
+          <view class="weui-uploader__hd">
+              <view class="weui-uploader__title">图片上传</view>
+              <view class="weui-uploader__info">{{localfiles.length}}/4</view>
+          </view>
+          <view class="weui-uploader__bd">
+            <block wx:for="{{localfiles}}" wx:key="*this">
+                <view class="weui-uploader__file" bindtap="Open" id="{{item}}">
+                    <image class="weui-uploader__img" src="{{item}}" mode="aspectFit" />
+                    
+                </view>
+            </block>
+            <view wx:if="{{Files.length<4}}" class="weui-uploader__files">
+              <view class="weui-uploader__input-box">
+                  <view class="weui-uploader__input" bindtap="chooseImage"></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </wux-cell>
+    </wux-cell-group>
+    
+    <wux-cell-group title="结账类型" label="预付款：{{depositnum}}元   总金额：{{total_amount + depositnum}} 元  应付：{{total_amount }}元 ">
       <wux-cell title="结账方式" is-link extra="{{ paymentType }}" bind:click="onpaymentType"></wux-cell>
       <view class="weui-cell weui-cell_input" wx:if="{{payvalue=='赊账'}}">
         <view class="weui-cell__hd">
             <view class="weui-label">预计结款日期</view>
         </view>
         <view class="weui-cell__bd">
-            <picker mode="date" value="{{date}}" start="2010-09-01" end="{{today}}" bindchange="bindDateChange">
+            <picker mode="date" value="{{date}}" start="2010-09-01" end="{{2099-09-01}}" bindchange="bindDateChange">
                 <view class="weui-input">{{date}}</view>
             </picker>
         </view>
       </view>
       <wux-cell wx:if="{{payvalue=='现结'}}">
-        <wux-input label="付款金额" type='digit' bind:change="GetpayAmount" value='{{payamount}}' controlled = "true"/>
+        <wux-input label="付款金额" type='digit' bind:blur="getpayAmount" value='{{payamount}}' controlled = "true"/>
       </wux-cell>
     </wux-cell-group>
   </view>

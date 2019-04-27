@@ -9,16 +9,15 @@ Page({
   data: {
     openid:"",
     types: ['个', '斤', '100个','千克', '吨',"打","平方米","米"],
-    typeIndex: 3,
     Files: [],
     localfiles: [],
     GoodName:"",
     GoodPrice:"",
+    GoodPrice_pur:"",
     GoodDescription:"",
     GoodReserve:"",
     GoodUnit: "请选择",
     savestatus: false,
-    value1: ''
   },
 
   /**
@@ -33,13 +32,12 @@ Page({
   },
   onchooseUnit() {
     $wuxSelect('#wux-select').open({
-      value: this.data.value1,
+      value: this.data.GoodUnit,
       options:this.data.types,
       onConfirm: (value, index, options) => {
         console.log('onConfirm', value, index, options)
         if (index !== -1) {
           this.setData({
-            value1: value,
             GoodUnit: options[index],
           })
         }
@@ -97,9 +95,14 @@ Page({
         GoodName:e.detail.value
     })
   },
-  GetGoodPrice:function(e){
+  GetGoodSalPrice:function(e){
     this.setData({
       GoodPrice: e.detail.value
+    })
+  },
+  GetGoodPurPrice: function (e) {
+    this.setData({
+      GoodPrice_pur: e.detail.value
     })
   },
   GetGoodsDescription:function(e){
@@ -149,7 +152,17 @@ Page({
       $wuxToptips().show({
         icon: 'cancel',
         hidden: false,
-        text: '请先填写货物单价',
+        text: '请先填写销售单价',
+        duration: 2000,
+        success() { },
+      })
+      return;
+    }
+    if (that.data.GoodPrice_pur == "" || that.data.GoodPrice_pur == null) {
+      $wuxToptips().show({
+        icon: 'cancel',
+        hidden: false,
+        text: '请先填写进货单价',
         duration: 2000,
         success() { },
       })
@@ -171,6 +184,7 @@ Page({
     },()=>{
       wx.showLoading({
         title: '正在保存',
+        mask:true
       })
       console.log(that.data.localfiles)
       const length = that.data.localfiles.length;
@@ -182,11 +196,12 @@ Page({
           data: {
             GoodName: that.data.GoodName,
             GoodPrice: that.data.GoodPrice,
+            GoodPrice_pur:that.data.GoodPrice_pur,
             GoodDescription: that.data.GoodPrice,
             GoodReserve: that.data.GoodReserve,
             GoodUnit: that.data.GoodUnit,
-            Svolume: "",
-            Pvolume: "",
+            Svolume: 0,
+            Pvolume: 0,
             Files: that.data.Files
           },
           success: res => {
@@ -297,7 +312,6 @@ Page({
         }
       }
         // wx.hideLoading()
-        
     })
   },
   openAlert: function (message) {

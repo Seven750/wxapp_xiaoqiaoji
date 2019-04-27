@@ -4,7 +4,8 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {avatarUrl:"https://thumbnail0.baidupcs.com/thumbnail/2e376c0508638c7fa8a5daaba768fefb?fid=8299455-250528-882646043003665&rt=pr&sign=FDTAER-DCb740ccc5511e5e8fedcff06b081203-pFenDS%2fQOtTtl4GgwSER5ne2234%3d&expires=8h&chkbd=0&chkv=0&dp-logid=2661807499546171009&dp-callid=0&time=1556186400&size=c1280_u720&quality=90&vuk=8299455&ft=image&autopolicy=1"
+  data: {
+    avatarUrl:"https://picabstract-preview-ftn.weiyun.com/ftn_pic_abs_v3/21f0a14536e86c99dfa384ca549e25993a89dae58bfe9f16ababaed1057be527c7fd6f200634cf4c744e27b9302c9bad?pictype=scale&from=30013&version=3.3.3.3&uin=2474539280&fname=Cover.jpg&size=750"
   },
   
   /**
@@ -17,15 +18,10 @@ Page({
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             success: res => {
-              // app.globalData.username = res.userInfo.nickName;
               app.globalData.userInfo = res.userInfo
               wx.switchTab({
                 url: '../Person/index'
               })
-              // this.setData({
-              //   username: res.userInfo.nickName,
-              //   userInfo: res.userInfo
-              // })
             }
           })
         }
@@ -35,13 +31,13 @@ Page({
 
 
   onGetUserInfo: function (e) {
-    this.onGetOpenid();
-    if (!this.data.logged && e.detail.userInfo) {
-      wx.setStorage({
-        key: "logged",
-        data:true
-      })
-    }
+    const that =this;
+    console.log(e)
+    if (e.detail.errMsg =="getUserInfo:fail auth deny")
+    {
+      that.openConfirm();
+    } else if (e.detail.errMsg == "getUserInfo:ok")
+        that.onGetOpenid();
   },
   onGetOpenid: function () {
     // 调用云函数
@@ -56,11 +52,36 @@ Page({
         })
       },
       fail: err => {
-        console.error('[云函数] [login] 调用失败', err)
+        wx.showModal({
+          title: '登陆失败',
+          content: '请检查您的网络',
+          showCancel: false,
+          confirmText: "确定",
+        })
         wx.reLaunch({
           url: '../Login/index',
         })
       }
     })
   },
+  openConfirm:function(){
+    wx.showModal({
+      title: '重新授权',
+      content: '需要您的基本账号信息来使用主要功能，否则会导致程序无法使用',
+      showCancel: false,
+      confirmText: "授权",
+      success: res => {
+        if (res.confirm) {
+          console.log("用户点击了确定")
+          wx.openSetting({
+            success:(res)=>{
+              wx.switchTab({
+                url: '../Person/index'
+              })
+            }
+          })
+        }
+      }
+    })
+  }
 })

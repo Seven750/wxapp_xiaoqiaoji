@@ -1,3 +1,5 @@
+import { $wuxSelect } from '../../../miniprogram_npm/wux-weapp/index'
+import { $wuxToptips } from '../../../miniprogram_npm/wux-weapp/index'
 const app = getApp()
 Page({
 
@@ -6,11 +8,11 @@ Page({
    * 是否修改状态
    * 用户的ID
    * 单位选择
-   * 单位选择的下标
    * 图片文件，从云端读取
    * 文件的云端路基
    * 货物名字
-   * 货物单价
+   * 货物销售单价
+   * 货物进货单价
    * 货物描述
    * 货物库存
    * 货物单位
@@ -25,11 +27,11 @@ Page({
     status:true,
     openid: "",
     types: ['个', '斤', '100个', '千克', '吨', "打", "平方米", "米"],
-    typeIndex: 3,
     Files: [],
     localfiles: [],
     GoodName: "",
     GoodPrice: "",
+    GoodPrice_pur:"",
     GoodDescription: "",
     GoodReserve: "",
     GoodUnit: "千克",
@@ -72,6 +74,20 @@ Page({
    */
   onShareAppMessage: function () {
 
+  },
+  onchooseUnit() {
+    $wuxSelect('#wux-select').open({
+      value: this.data.GoodUnit,
+      options: this.data.types,
+      onConfirm: (value, index, options) => {
+        console.log('onConfirm', value, index, options)
+        if (index !== -1) {
+          this.setData({
+            GoodUnit: options[index],
+          })
+        }
+      },
+    })
   },
   pickerChange(e) {
     console.log(e)
@@ -156,9 +172,14 @@ Page({
       GoodName: e.detail.value
     })
   },
-  GetGoodPrice: function (e) {
+  GetGoodSalPrice: function (e) {
     this.setData({
       GoodPrice: e.detail.value
+    })
+  },
+  GetGoodPurPrice: function (e) {
+    this.setData({
+      GoodPrice_pur: e.detail.value
     })
   },
   GetGoodsDescription: function (e) {
@@ -235,6 +256,7 @@ Page({
           data: {
             GoodName: that.data.GoodName,
             GoodPrice: that.data.GoodPrice,
+            GoodPrice_pur:that.data.GoodPrice_pur,
             GoodDescription: that.data.GoodDescription,
             GoodReserve: that.data.GoodReserve,
             GoodUnit: that.data.GoodUnit,
@@ -316,6 +338,7 @@ Page({
                   data: {
                     GoodName: that.data.GoodName,
                     GoodPrice: that.data.GoodPrice,
+                    GoodPrice_pur:that.data.GoodPrice_pur,
                     GoodDescription: that.data.GoodDescription,
                     GoodReserve: that.data.GoodReserve,
                     GoodUnit: that.data.GoodUnit,
@@ -414,16 +437,6 @@ Page({
       title: '正在加载',
     })
     const db = wx.cloud.database();
-    //从云函数中拿到属于该货物的数据
-    // db.collection("Goods").where({
-    //   _openid: app.globalData.openid,
-    //   GoodName:name
-    // }).get({
-    //   success:res=>{
-    //     console.log(res)
-    //   }
-    // })
-    //改成从小程序端发起请求拿数据
     db.collection("Goods").where({
       _openid: app.globalData.openid,
       GoodName: name
@@ -448,6 +461,7 @@ Page({
       that.setData({
         GoodName: res.data[0].GoodName,
         GoodPrice: res.data[0].GoodPrice,
+        GoodPrice_pur:res.data[0].GoodPrice_pur,
         GoodDescription: des,
         GoodReserve: res.data[0].GoodReserve,
         GoodUnit: res.data[0].GoodUnit,
@@ -457,7 +471,7 @@ Page({
         ruploadfiles:4-pic.length
       }, () =>{
         wx.hideLoading()
-        console.log("436",that.data.Files)
+        console.log("Files",that.data.Files)
       })
 
     }).catch(err=>{

@@ -4,19 +4,24 @@
   <view class='page_body' disabled="true">
     <wux-cell-group>
             <wux-cell>
-                <wux-input label="货物名称" bind:change='GetGoodName'/>
+                <wux-input label="货物名称" bind:blur='GetGoodName'/>
             </wux-cell>
             <wux-cell title="货物单位" extra="{{ GoodUnit }}" is-link bind:click="onchooseUnit"></wux-cell>
             <wux-cell>
-                <wux-input label="货物单价" type='digit' bind:change="GetGoodPrice">
+                <wux-input label="销售单价" type='digit' bind:blur="GetGoodSalPrice">
                  <view slot="footer" wx:if="{{GoodUnit!='请选择'}}">￥/{{ GoodUnit }}</view>
                 </wux-input>
             </wux-cell>
             <wux-cell>
-                <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:change="GetGoodsDescription"/>
+                <wux-input label="进货单价" type='digit' bind:blur="GetGoodPurPrice">
+                 <view slot="footer" wx:if="{{GoodUnit!='请选择'}}">￥/{{ GoodUnit }}</view>
+                </wux-input>
             </wux-cell>
             <wux-cell>
-                <wux-input label="目前货物库存" type='number' bind:change="GetGoodReserve">
+                <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription"/>
+            </wux-cell>
+            <wux-cell>
+                <wux-input label="目前货物库存" type='number' bind:blur="GetGoodReserve">
                  <view slot="footer" wx:if="{{GoodUnit!='请选择'}}">{{ GoodUnit }}</view>
                 </wux-input>
             </wux-cell>

@@ -22,18 +22,10 @@ exports.main = async (event, context) => {
       tasks.push(promise)
     }
     const result = (await Promise.all(tasks))[0].data
-    // if(event.inf=="GoodsName")
-    //   return result.reduce(getName,[])
+
     return result.reduce(getName, []);
   }
-  
-  // 等待所有
-  //   return (await Promise.all(tasks)).reduce((acc, cur) => {
-  //     ({
-  //     data: acc.data.concat(cur.data),
-  //     errMsg: acc.errMsg,
-  // })
-  // })
+
 
 }
 //提取对应的货物信息
