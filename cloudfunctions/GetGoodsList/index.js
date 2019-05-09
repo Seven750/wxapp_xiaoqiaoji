@@ -4,9 +4,7 @@ const db = cloud.database()
 const MAX_LIMIT = 100
 exports.main = async (event, context) => {
   // 先取出集合记录总数
-  const countResult = await db.collection('Goods').where({
-    _openid:event.userid
-  }).count()
+  const countResult = await db.collection('Goods').count()
   const total = countResult.total
   if(total==0)
     return "无记录"

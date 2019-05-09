@@ -2,14 +2,13 @@
   "pages": [
     "pages/Login/index",
     "pages/GoodsList/index",
-    
     "pages/Person/index",
     "pages/OrderList/index"
   ],
   "subpackages": [
     {
       "root": "pages_good",
-      "name":"good",
+      "name": "good",
       "pages": [
         "pages/AddGoods/index",
         "pages/ModifyGoods/index"
@@ -20,13 +19,25 @@
       "name": "order",
       "pages": [
         "pages/AddPurchaseOrders/index",
-        "pages/AddSalesOrders/index"
+        "pages/AddSalesOrders/index",
+        "pages/confirm_order/index"
       ]
     },
     {
       "root": "pages_charts",
       "name": "charts",
+      "pages": []
+    },
+    {
+      "root": "pages_person",
+      "name": "person",
       "pages": [
+        "pages/client/index",
+        "pages/client_order/index",
+        "pages/setting/index",
+        "pages/setting_detail/index",
+        "pages/deadline_order/index",
+        "pages/warn_stock/index"
       ]
     }
   ],
@@ -42,6 +53,13 @@
       "packages": [
         "pages_good"
       ]
+    },
+    "pages/Person/index": {
+      "network": "all",
+      "packages": [
+        "pages_charts",
+        "pages_person"
+      ]
     }
   },
   "window": {
@@ -52,27 +70,26 @@
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color":"#626567",
+    "color": "#626567",
     "selectedColor": "#17abe3",
     "list": [
       {
         "pagePath": "pages/OrderList/index",
         "text": "订单",
-        "iconPath":"images/order-off.png",
-        "selectedIconPath":"images/order-on.png"
-        
+        "iconPath": "images/order-off.png",
+        "selectedIconPath": "images/order-on.png"
       },
       {
         "pagePath": "pages/GoodsList/index",
         "text": "货物",
-        "iconPath":"images/goods-off.png",
-        "selectedIconPath":"images/goods-on.png"
+        "iconPath": "images/goods-off.png",
+        "selectedIconPath": "images/goods-on.png"
       },
       {
         "pagePath": "pages/Person/index",
         "text": "个人",
-        "iconPath":"images/person-off.png",
-        "selectedIconPath":"images/person-on.png"
+        "iconPath": "images/person-off.png",
+        "selectedIconPath": "images/person-on.png"
       }
     ]
   }

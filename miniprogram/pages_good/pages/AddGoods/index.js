@@ -1,6 +1,5 @@
 import { $wuxToptips } from '../../../miniprogram_npm/wux-weapp/index'
 import { $wuxSelect } from '../../../miniprogram_npm/wux-weapp/index'
-const app = getApp()
 Page({
 
   /**
@@ -8,7 +7,7 @@ Page({
    */
   data: {
     openid:"",
-    types: ['个', '斤', '100个','千克', '吨',"打","平方米","米"],
+    types:"",
     Files: [],
     localfiles: [],
     GoodName:"",
@@ -24,11 +23,17 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    if (app.globalData.openid) {
-      this.setData({
-        openid: app.globalData.openid
-      })
-    }
+    const that = this
+    wx.getStorage({
+      key: 'persondata',
+      success(res) {
+      console.log(res)
+       that.setData({
+         types:res.data.goodUnit
+       }) 
+      }
+    })
+    
   },
   onchooseUnit() {
     $wuxSelect('#wux-select').open({
@@ -195,13 +200,12 @@ Page({
         db.collection('Goods').add({
           data: {
             GoodName: that.data.GoodName,
-            GoodPrice: that.data.GoodPrice,
-            GoodPrice_pur:that.data.GoodPrice_pur,
-            GoodDescription: that.data.GoodPrice,
-            GoodReserve: that.data.GoodReserve,
+            GoodPrice: parseInt(that.data.GoodPrice),
+            GoodPrice_pur:parseInt(that.data.GoodPrice_pur),
+            GoodDescription: that.data.GoodDescription,
+            GoodReserve:parseInt(that.data.GoodReserve),
             GoodUnit: that.data.GoodUnit,
             Svolume: 0,
-            Pvolume: 0,
             Files: that.data.Files
           },
           success: res => {
@@ -266,12 +270,12 @@ Page({
                 db.collection('Goods').add({
                   data: {
                     GoodName: that.data.GoodName,
-                    GoodPrice: that.data.GoodPrice,
-                    GoodDescription: that.data.GoodPrice,
-                    GoodReserve: that.data.GoodReserve,
+                    GoodPrice: parseInt(that.data.GoodPrice),
+                    GoodPrice_pur: parseInt(that.data.GoodPrice_pur),
+                    GoodDescription: that.data.GoodDescription,
+                    GoodReserve: parseInt(that.data.GoodReserve),
                     GoodUnit: that.data.GoodUnit,
-                    Svolume: "",
-                    Pvolume: "",
+                    Svolume: 0,
                     Files: that.data.Files
                   },
                   success: res => {

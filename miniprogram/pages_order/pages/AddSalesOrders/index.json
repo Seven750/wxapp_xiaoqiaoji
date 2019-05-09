@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "添加订单信息",
+  "navigationBarTitleText": "添加售货订单信息",
   "usingComponents": {
     "i-button": "../../../dist/button/index",
     "wux-cell-group": "../../../miniprogram_npm/wux-weapp/cell-group/index",

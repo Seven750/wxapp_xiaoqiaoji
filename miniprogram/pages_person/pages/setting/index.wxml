@@ -1,0 +1,15 @@
+<view class="page">
+  <wux-cell-group>
+    <wux-cell title="修改货物单位" is-link url="../setting_detail/index?detail=unit" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
+  <wux-cell-group>
+    <wux-cell title="添加折扣" is-link url="../setting_detail/index?detail=discount" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
+  <wux-cell-group>
+    <wux-cell title="收账期限提醒" is-link url="../setting_detail/index?detail=deadline" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
+  <wux-cell-group>
+    <wux-cell title="最低库存警示" is-link url="../setting_detail/index?detail=stock" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
+  
+</view>

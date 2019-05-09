@@ -1,5 +1,6 @@
 .userinfo {
-  margin-top: 40rpx;
+  margin-top: 10rpx;
+  margin-bottom: 5px;
   height: 140rpx;
   width: 100%;
   background: #fff;
@@ -33,3 +34,7 @@
 .userinfo-nickname::after {
   border: none;
 }
+.setting{
+  margin-top: 100px;
+}
+.weui-badge{display:inline-block;padding:.15em .4em;min-width:8px;border-radius:18px;background-color:#e64340;color:#fff;line-height:1.2;text-align:center;font-size:12px;vertical-align:middle}.weui-badge_dot{padding:.4em;min-width:0}

@@ -1,0 +1,10 @@
+<view class="weui-tab__content" wx:if="{{!status}}">
+    <wux-prompt visible="{{ true}}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}" />
+</view>
+<view class="page" wx:if="{{status}}">
+  <view class='page_bd'>
+    <wux-cell-group wx:for="{{good}}" wx:key="">
+      <wux-cell title="{{index+1}}.  {{item.GoodName}}" extra="剩余{{item.GoodReserve}}{{item.GoodUnit}}"></wux-cell>
+    </wux-cell-group>
+  </view>
+</view>

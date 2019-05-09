@@ -6,6 +6,7 @@ var order_good = [];
 Page({
 
   /**
+   * 用户数据记录的数据库id
    * 页面的初始数据
    * 订单id
    * 订单类别
@@ -21,14 +22,25 @@ Page({
    * 选择货物的详细信息
    * 选择货物的下标值
    * 选择货物的默认title
+   * 折扣
+   * 折扣下标值
+   * 折扣选项
+   * 抹零
+   * 抹零下标值
+   * 抹零选项
    * 支付方式的下标值
    * 上传图片的状态
    * 预付金的状态
    * 预付金是否大于的订单总金额的状态
    * 保存按钮是否disable
    * 结款日期
+   * 折扣后
+   * 最后总金额
+   * 出售量大于库存量的货物
+   * 利润
    */
   data: {
+    data_status_id:"",
     orderID: "",
     category:"售出",
     clientname: "",
@@ -43,68 +55,92 @@ Page({
     options:"",
     goodvalue: "",
     title: "选择",
+    discount:"无折扣",
+    discountvalue:"",
+    discountoptions:[],
+    removal:"不抹零",
+    removalvalue:"",
+    removaloptions:["不抹零","抹小数","抹个位","抹十位","抹百位","抹千位"],
     payvalue: "",
     up_pic_status:false,
     deposit_status:false,
     depositnum_errstatus: false,
     savestatus:false,
-    date: "选择日期",
+    repaymentdate: "选择日期",
+    after_disc_total:0,
+    after_disc_rem_total:0,
+    worrygood:"",
+    profit:0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function () {
+  onLoad: function (options) {
+    console.log(options)
+    if(options.client!="none")
+    {
+      this.setData({
+        clientname: options.client
+      })
+    }
+      
     wx.showLoading({
       title: '正在加载',
     })
+    
+  },
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
     const that = this;
     const db = wx.cloud.database()
+    db.collection("data_status").field({
+      discountoptions:true,
+      orderID:true
+    }).get().then(res => {
+      console.log(res.data)
+      let i = "00000000";
+      let orderid = res.data[0].orderID + 1
+      while (orderid > 0) {
+        i = i.slice(0, -1)
+        orderid = parseInt(orderid / 10)
+      }
+      that.setData({
+        discountoptions: res.data[0].discountoptions,
+        orderID: i + (res.data[0].orderID + 1),
+        data_status_id:res.data[0]._id
+      })
+    })
     db.collection('Goods').field({
       GoodName: true,
       GoodUnit: true,
       GoodReserve: true,
-      GoodPrice:true
+      GoodPrice: true,
+      GoodPrice_pur:true
     })
       .get()
-      .then((res)=>{
+      .then((res) => {
         console.log(res)
         //新建一个数组来将构建列表
-        const options=[];
+        const options = [];
         const length_goods = res.data.length;
-        for(let i =0;i<length_goods;i++)
-        {
+        for (let i = 0; i < length_goods; i++) {
           const newob = res.data[i]
-          newob.value = ''+i+'';
+          newob.value = '' + i + '';
           newob.title = res.data[i].GoodName
           options.push(newob)
         }
         that.setData({
-          options:options
+          options: options
         })
       })
       .catch(console.error)
-      
-      db.collection('data_status').field({
-        pur_ord_num:true
-      }).get().then((res)=>{
-        console.log(res)
-        if(res.data=="")
-          that.setData({
-            orderID:"00000001"
-          })
-        else
-        {
-          const idstring =res.data[0].pur_ord_num;
-          const id =parseInt(idstring) +1 ;
-          that.setData({
-            orderID :id+""
-          })
-        }
-      })
-     today = this.curentTime("date")
-     wx.hideLoading();
+    today = this.curentTime("date")
+    wx.hideLoading();
   },
+
   chooseImage: function (e) {
     var that = this;
     wx.chooseImage({
@@ -125,8 +161,6 @@ Page({
     })
   },
   PreviewImage: function (e) {
-    console.log(e.currentTarget.id);
-    console.log(this.data.localfiles);
     wx.previewImage({
       current: e.currentTarget.id, // 当前显示图片的http链接
       urls: this.data.localfiles // 需要预览的图片http链接列表
@@ -222,7 +256,9 @@ Page({
         for (let i = 0; i < order_good.length; i++)
           total_amount += order_good[i].amount
         this.setData({
-          total_amount
+          total_amount,
+          after_disc_total:total_amount,
+          after_disc_rem_total:total_amount
         })
       },
       onCancel:(e)=>{
@@ -247,11 +283,141 @@ Page({
         }
       },
     })
-    
+  },
+  ondiscountType() {
+    const that =this;
+    $wuxSelect('#selectdiscount').open({
+      value: this.data.discountvalue,
+      options: this.data.discountoptions,
+      onConfirm: (value, index, options) => {
+        console.log('onConfirm', value, index, options)
+        if (index == 0 && that.data.discount!="无折扣")
+        {
+          this.setData({
+            after_disc_total: that.data.total_amount - that.data.depositnum,
+            after_disc_rem_total: that.data.total_amount - that.data.depositnum,
+            discountvalue: value,
+            discount: options[index]
+          })
+        }
+        if (index !== -1 &&index!==0) {
+          let num = options[index].replace("折", "")
+          let disc = parseInt(num)/(Math.pow(10,parseInt(num.length)))
+          let total_amount = (parseInt(that.data.total_amount) *disc);
+          this.setData({
+            after_disc_total: total_amount - that.data.depositnum,
+            after_disc_rem_total: total_amount - that.data.depositnum,
+            discountvalue: value,
+            discount: options[index]
+          })
+        }
+      },
+    })
+  },
+  onremoval() {
+    const that= this;
+    $wuxSelect('#selectremoval').open({
+      value: this.data.removalvalue,
+      options: this.data.removaloptions,
+      onConfirm: (value, index, options) => {
+        console.log('onConfirm', value, index, options)
+        let total = that.data.after_disc_rem_total+""
+        let arr = total.split(".")
+        if (index !== -1) {
+          switch (index) {
+            case 0: this.setData({
+              after_disc_rem_total:that.data.after_disc_total,
+              removalvalue: value,
+              removal: options[index]
+            });break;
+            case 1: this.setData({
+              after_disc_rem_total:arr[0],
+              removalvalue: value,
+              removal: options[index]
+            }); break;
+            case 2: 
+            if(arr[0].length>0)
+            {
+              var str = arr[0].slice(0,-1);
+              console.log(str)
+              if(str.length>0)
+                str = str +"0"
+              else str = "0"
+              console.log(str)
+              this.setData({
+                after_disc_rem_total:str,
+                removalvalue: value,
+                removal: options[index]
+              }); 
+            }else{
+              this.errremoval();
+            }
+              break;
+            case 3: if (arr[0].length > 1) {
+              let str = arr[0].slice(0, -2);
+              console.log(str)
+              if (str.length > 0)
+                str = str + "00"
+              else str = "0"
+              console.log(str)
+              this.setData({
+                after_disc_rem_total: str,
+                removalvalue: value,
+                removal: options[index]
+              });
+            } else {
+              this.errremoval();
+            }
+              break;
+            case 4: if (arr[0].length > 2) {
+              let str = arr[0].slice(0, -3);
+              if (str.length > 0)
+                str = str + "000"
+              else str = "0"
+              this.setData({
+                after_disc_rem_total: str,
+                removalvalue: value,
+                removal: options[index]
+              });
+            } else {
+              this.errremoval();
+            }
+              break;
+            case 5: if (arr[0].length > 3) {
+              let str = arr[0].slice(0, -4);
+              if (str.length > 0)
+                str = str + "0000"
+              else str = "0"
+              this.setData({
+                after_disc_rem_total: str,
+                removalvalue: value,
+                removal: options[index]
+              });
+            } else {
+              this.errremoval();
+            }
+              break;
+          }
+        }
+      },
+    })
+  },
+  errremoval:function(){
+    this.setData({
+      removalvalue: "0",
+      removal: "无折扣"
+    }); 
+    $wuxToptips().show({
+      icon: 'cancel',
+      hidden: false,
+      text: '折扣力度大于总金额',
+      duration: 1500,
+      success() { },
+    })
   },
   bindDateChange: function (e) {
     this.setData({
-      date: e.detail.value
+      repaymentdate: e.detail.value
     })
   },
   getpayAmount:function(e){
@@ -261,11 +427,14 @@ Page({
   },
   onChangepic_status(e) {
     this.setData({
+      Files:[],
+      localfiles:[],
       up_pic_status : e.detail.value
     })
   },
   onChangedep_status(e) {
     this.setData({
+      depositnum:0,
       deposit_status: e.detail.value
     })
   },
@@ -329,16 +498,17 @@ Page({
     })
   },
   Getdepositnum: function (e) {
-    const depositnum = parseInt(e.detail.value);
+    var depositnum = e.detail.value;
+    if(depositnum == "") depositnum =0; 
     var total_amount = 0
-    if (this.data.depositnum== 0)
-      total_amount = this.data.total_amount - depositnum
+    if (this.data.depositnum==0)
+      total_amount = parseInt(this.data.after_disc_rem_total) -parseInt(depositnum)
     else
-      total_amount = this.data.total_amount + parseIntthis.data.depositnum  -depositnum
+      total_amount = parseInt(this.data.after_disc_rem_total) +parseInt(this.data.depositnum)  -parseInt(depositnum)
     if(total_amount<0)
     {$wuxToptips().show({
         hidden: false,
-        text: '预付金额大于总订单金额',
+        text: '预付金额大于总订单需支付金额',
         duration: 2000,
         success() { },
       })
@@ -349,107 +519,100 @@ Page({
     }
     this.setData({
       depositnum_errstatus:false,
-      depositnum,
-      total_amount
+      depositnum: parseInt(depositnum),
+      after_disc_rem_total:total_amount
     })
   },
   getPrice:function(e){
+    const that = this;
     const id = e.currentTarget.id;
     var value =0
     if(e.detail.value!="")
        value = e.detail.value;
-    if(value > order_good[id].GoodReserve)
+    order_good[id].valueunit = value;
+    if(parseInt(value) >parseInt(order_good[id].GoodReserve))
     {
       $wuxToptips().show({
         icon: 'cancel',
         hidden: false,
-        text: order_good[id].GoodName+ '已超出当前' + order_good[id].GoodReserve + order_good[id].GoodUnit + "的库存量",
+        text: order_good[id].GoodName+ '已超出目前' + order_good[id].GoodReserve + order_good[id].GoodUnit + "的库存量",
         duration: 2000,
         success() { },
       })
       return 
     }
     //货物此次出售了多少单位的货
-    order_good[id].valueunit = value;
     order_good[id].amount = value*order_good[id].GoodPrice;
     var total_amount =0
     for(let i =0;i<order_good.length;i++)
       total_amount += order_good[i].amount
     this.setData({
-      total_amount
+      total_amount,
+      after_disc_rem_total:total_amount,
+      after_disc_total:total_amount
+    })
+  },
+  tipsmessage:function(text)
+  {
+    $wuxToptips().show({
+      icon: 'cancel',
+      hidden: false,
+      text: text,
+      duration: 2000,
+      success() { },
     })
   },
   onAdd: function () {
     var that = this;
     if (that.data.orderID == "" || that.data.orderID == null) {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先填写订单号',
-        duration: 2000,
-        success() { },
-      })
-      return;
+      that.tipsmessage("请先填写订单号")
     }
     if (that.data.clientname == "" || that.data.clientname == null) {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先填写客户名',
-        duration: 2000,
-        success() { },
-      })
+      that.tipsmessage("请先填写客户名")
       return;
     }
     if (that.data.payvalue == "" || that.data.paymentType == "选择") {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先选择结账方式',
-        duration: 2000,
-        success() { },
-      })
+      that.tipsmessage("请先选择结账方式")
+      return;
+    }
+    if (that.data.worrygood != "") {
+      let text = that.data.worrygood.GoodName + '已超出目前' + that.data.worrygood.GoodReserve + that.data.worrygood.GoodUnit + "的库存量"
+      that.tipsmessage(text)
       return;
     }
     if (that.data.payamount == "" && that.data.paymentType == "现结") {
-      console.log(that.data.payamount)
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先填写付款金额',
-        duration: 2000,
-        success() { },
-      })
+      that.tipsmessage("请先填写付款金额")
       return;
     }
-    if (that.data.date == "选择日期" && that.data.paymentType == "赊账") {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先选择结款日期',
-        duration: 2000,
-        success() { },
-      })
+    if (that.data.repaymentdate == "选择日期" && that.data.paymentType == "赊账") {
+      that.tipsmessage("请先选择结款日期")
       return;
     }
-    if (that.data.goodvalue == "" || that.data.title == "选择") {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先选择货物',
-        duration: 2000,
-        success() { },
-      })
+    if(order_good!="")
+    {
+      var status = 0;
+      for (let t = 0; t < order_good.length; t++) {
+        if (order_good[t].valueunit > order_good[t].GoodReserve) {
+          status++;
+          $wuxToptips().show({
+            icon: 'cancel',
+            hidden: false,
+            text: order_good[t].GoodName + '已超出目前' + order_good[t].GoodReserve + order_good[t].GoodUnit + "的库存量",
+            duration: 2000,
+            success() { },
+          })
+          break;
+        }
+      }
+      console.log(status)
+      if(status !=0)
+        return;
+    }else{
+      that.tipsmessage("请先填写货物")
       return;
     }
     if (that.data.deposit_status == true && that.data.depositnum==0) {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '请先填写预付金额',
-        duration: 2000,
-        success() { },
-      })
+      that.tipsmessage("请先填写预付金额")
       return;
     }
     const db = wx.cloud.database();
@@ -460,25 +623,25 @@ Page({
         title: '正在保存',
         mask: true
       })
+      var profit = 0;
       const order_time = this.curentTime()
       const length = that.data.localfiles.length;
+      //先更新货物当中的库存信息
+      for (let m = 0; m < order_good.length; m++) {
+        profit += parseInt(order_good[m].valueunit)*order_good[m].GoodPrice_pur
+        db.collection("Goods").doc(order_good[m]._id).update({
+          data: {
+            Svolume: db.command.inc(parseInt(order_good[m].valueunit)),
+            GoodReserve: parseInt(order_good[m].GoodReserve) - parseInt(order_good[m].valueunit)
+          },
+          fail: () => {
+            that.openAlert("更新货物库存失败")
+            console.error
+          }
+        })
+      }
       if (length == 0) {
-        //先更新货物当中的库存信息
-        for (let m = 0; m < order_good.length;m++)
-        {
-          db.collection("Goods").doc(order_good[m]._id).update({
-            data:{
-              Svolume: order_good[id].valueunit,
-              GoodReserve: parseInt(order_good[id].GoodReserve)-parseInt(order_good[id].valueunit) 
-            },
-            fail:()=>{
-              that.openAlert("新增记录失败")
-              console.error
-            }
-          })
-        }
         //如果用户没有上传图片，那么就直接上传货物信息
-        console.log(that.data.Files)
         db.collection('Order').add({
           data: {
             orderID: that.data.orderID,
@@ -490,16 +653,42 @@ Page({
             paymentType: that.data.paymentType,
             orderDescription: that.data.orderDescription,
             depositnum: that.data.depositnum,
+            removal: that.data.removal,
             total_amount: that.data.total_amount,
+            discount: that.data.discount,
+            after_disc_rem_total: that.data.after_disc_rem_total,
             payamount: that.data.payamount,
             Files: that.data.Files,
-            date:that.data.date
+            repaymentdate: that.data.repaymentdate,
+            createTime: db.serverDate(),
+            profit: that.data.after_disc_rem_total-profit
           },
           success: res => {
-            // 在返回结果中会包含新创建的记录的 _id 可以当作索引
-            this.setData({
-              counterId: res._id,
-              count: 1
+            let client = []
+            client.push(that.data.clientname)
+            console.log(client)
+            db.collection("data_status").where({
+              client:db.command.in(client)
+            }).get({
+              success:res=>{
+                console.log(res)
+                if(res.data=="")
+                  db.collection("data_status").doc(this.data.data_status_id).update({
+                    data: {
+                      orderID:parseInt(that.data.orderID),
+                      client: db.command.push(client)
+                    },
+                    success:res=>console.log(res)
+                    
+                  })
+                else
+                db.collection("data_status").doc(this.data.data_status_id).update({
+                  data: {
+                    orderID: parseInt(that.data.orderID)
+                  }
+                })
+              },
+              fail: console.error
             })
             wx.showToast({
               title: '新增记录成功',
@@ -545,11 +734,9 @@ Page({
               //需要删除之前上传过的文件
               console.error('[上传第' + j + '文件] 失败：', e)
               that.openAlert('[上传第' + j + '文件] 失败')
-
             },
             complete: result => {
               filestimes = filestimes + 1;
-              console.log("filestimes", filestimes)
               if (filestimes == length) {
                 db.collection('Order').add({
                   data: {
@@ -562,49 +749,62 @@ Page({
                     paymentType: that.data.paymentType,
                     orderDescription: that.data.orderDescription,
                     depositnum: that.data.depositnum,
+                    removal: that.data.removal,
                     total_amount: that.data.total_amount,
+                    discount: that.data.discount,
+                    after_disc_rem_total: that.data.after_disc_rem_total,
                     payamount: that.data.payamount,
                     Files: that.data.Files,
-                    date: that.data.date
+                    repaymentdate: that.data.repaymentdate,
+                    createTime: db.serverDate(),
+                    profit: that.data.after_disc_rem_total - profit
                   },
                   success: res => {
-                    // 在返回结果中会包含新创建的记录的 _id 可以当作索引
-                    this.setData({
-                      counterId: res._id,
-                      count: 1
+                    let client = []
+                    client.push(that.data.clientname)
+                    console.log(client)
+                    db.collection("data_status").where({
+                      client: db.command.in(client)
+                    }).get({
+                      success: res => {
+                        if (res.data == "") 
+                        db.collection("data_status").doc(this.data.data_status_id).update({
+                          data: {
+                            orderID: parseInt(that.data.orderID),
+                            client: db.command.push(client)
+                          },
+                          success: res => console.log(res)
+                        })
+                        else 
+                        db.collection("data_status").doc(this.data.data_status_id).update({
+                          data: {
+                            orderID: parseInt(that.data.orderID)
+                          }
+                        })
+                      },
+                      fail: console.error
                     })
                     wx.showToast({
-                      title: '新增记录成功',
+                      title: '新增订单成功',
                     })
-                    console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
                   },
                   fail: err => {
-                    that.openAlert("新增记录失败")
+                    that.openAlert("新增订单失败")
                     that.setData({
                       savestatus: true
                     })
-                    console.error('[数据库] [新增记录] 失败：', err)
                   }
                 })
                 wx.reLaunch({
                   url: '../../../pages/OrderList/index',
-                  // success: function (e) {
-                  //   const page = getCurrentPages().pop();
-                  //   console.log(page)
-                  //   if (page == undefined || page == null)
-                  //     return;
-                  //   page.onLoad()
-                  // }
                 })
               }
               else
                 return
             }
           })
-
         }
       }
-      // wx.hideLoading()
     })
   },
   openAlert: function (message) {
@@ -621,6 +821,25 @@ Page({
         }
       }
     });
+  },
+  removeAaary:function(_arr, _obj) {
+    var length = _arr.length;
+    for (var i = 0; i < length; i++) {
+      if (_arr[i] == _obj) {
+        if (i == 0) {
+          _arr.shift(); //删除并返回数组的第一个元素
+          return _arr;
+        }
+        else if (i == length - 1) {
+          _arr.pop();  //删除并返回数组的最后一个元素
+          return _arr;
+        }
+        else {
+          _arr.splice(i, 1); //删除下标为i的元素
+          return _arr;
+        }
+      }
+    }
   },
   backorderlist: function (e) {
     wx.navigateBack({

@@ -1,6 +1,9 @@
 {
   "navigationBarTitleText": "个人主页",
   "usingComponents": {
-    "wux-icon": "../../miniprogram_npm/wux-weapp/icon/index"
+    "wux-icon": "../../miniprogram_npm/wux-weapp/icon/index",
+    "wux-cell-group": "../../miniprogram_npm/wux-weapp/cell-group/index",
+    "wux-cell": "../../miniprogram_npm/wux-weapp/cell/index",
+    "wux-badge": "../../miniprogram_npm/wux-weapp/badge/index"
   }
 }

@@ -4,6 +4,7 @@ import classNames from '../helpers/classNames'
 const defaults = {
     prefixCls: 'wux-toptips',
     classNames: 'wux-animate--slideInDown',
+    icon: 'cancel',
     hidden: false,
     text: '',
     duration: 3000,
@@ -18,7 +19,7 @@ baseComponent({
     computed: {
         classes() {
             const { prefixCls } = this.data
-            const ico = this.data.icon ? this.data.icon : ''
+            const ico = this.data.icon ? this.data.icon : 'cancel'
             const wrap = classNames(prefixCls)
             const content = classNames(`${prefixCls}__content`, {
                 [`${prefixCls}__content--${ico}`]: ico,

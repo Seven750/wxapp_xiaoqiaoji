@@ -1,0 +1,61 @@
+<wux-toptips id="wux-toptips" />
+<wux-fab-button position="topRight" theme="calm" direction="vertical" bind:change="onclickfab" actionRotate="{{actionRotate}}" wx:if="{{(detail!='stock' && detail!='deadline') }}" />
+<view class="page">
+<view class='page_bd'>
+  <wux-cell-group wx:if="{{detail=='unit'}}">
+    <block wx:for="{{unit}}" wx:key="">
+      <i-swipeout  i-class="i-swipeout-demo-item" actions="{{actions}}" bindchange="onclick" id = "{{index}}">
+        <view slot="content">
+          <i-cell
+              i-class="i-cell-padding" 
+              title="{{item}}">
+          </i-cell>
+        </view>
+      </i-swipeout>
+    </block>
+  </wux-cell-group>
+  <wux-cell-group wx:if="{{detail=='discount'}}">
+    <block wx:for="{{discountoptions}}" wx:key="">
+      <i-swipeout  i-class="i-swipeout-demo-item" actions="{{actions}}" bindchange="onclick" id = "{{index}}">
+        <view slot="content">
+          <i-cell
+              i-class="i-cell-padding" 
+              title="{{item}}">
+          </i-cell>
+        </view>
+      </i-swipeout>
+    </block>
+  </wux-cell-group>
+  <wux-cell-group wx:if="{{add_status}}">
+    <wux-cell>
+      <wux-input label="{{label}}" extra="{{inputextra}}" type='text' bind:clear="onClear" bind:confirm="onBlur" confirm-type="保存" clear="{{true}}"  bind:blur="onBlur" id="newunit"></wux-input>
+    </wux-cell>
+    <view class="message_unit" wx:if="{{detail=='discount'}}">
+      填入举例：98 或 93;94;95（数字大于零）
+    </view>
+    <view class="message_unit">
+      可以同时添加多个{{type}}，以 ；隔开,勿填入空格或字符
+    </view>
+  </wux-cell-group>
+  <wux-cell-group wx:if="{{detail=='stock'}}">
+    <wux-cell title="监控库存">
+      <wux-switch name="balanced" slot="footer" color="balanced" value="{{ stock_status }}" bind:change="onChangestock_status" />
+    </wux-cell>
+    <wux-cell wx:if="{{stock_status}}">
+      <wux-input label="监控库存值" type='digit' bind:blur="getstocknum"  controlled = "true" value='{{stock_value}}' />
+    </wux-cell>
+  </wux-cell-group>
+  <wux-cell-group wx:if="{{detail=='deadline'}}">
+    <wux-cell title="监控账单还账日期">
+      <wux-switch name="balanced" slot="footer" color="balanced" value="{{ deadline_status }}" bind:change="onChangestock_status" />
+    </wux-cell>
+    <wux-cell wx:if="{{deadline_status}}">
+      <wux-input label="监控" type='number' extra="日内的收账" bind:blur="getstocknum"  controlled = "true" value='{{deadline_value}}' />
+    </wux-cell>
+  </wux-cell-group>
+</view>
+<view class='footer_button' wx:if="{{(detail!='stock' && detail!='deadline') }}">
+      <i-button bind:click="onAdd" type="info" shape="circle" size="small" disabled='{{savestatus}}' >保存</i-button>
+      <i-button bind:click="backorderlist" type="ghost" shape="circle" size="small">返回</i-button>
+  </view>
+</view>

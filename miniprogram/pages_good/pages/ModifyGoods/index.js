@@ -1,6 +1,5 @@
 import { $wuxSelect } from '../../../miniprogram_npm/wux-weapp/index'
 import { $wuxToptips } from '../../../miniprogram_npm/wux-weapp/index'
-const app = getApp()
 Page({
 
   /**
@@ -26,7 +25,7 @@ Page({
   data: {
     status:true,
     openid: "",
-    types: ['个', '斤', '100个', '千克', '吨', "打", "平方米", "米"],
+    types: "",
     Files: [],
     localfiles: [],
     GoodName: "",
@@ -47,12 +46,16 @@ Page({
    */
   onLoad: function (options) {
     console.log(options)
-    if (app.globalData.openid) {
-      this.setData({
-        openid: app.globalData.openid
-      })
-    }
     this.getGoodsinformation(options.GoodName)
+    const that = this
+    wx.getStorage({
+      key: 'persondata',
+      success(res) {
+        that.setData({
+          types: res.data.goodUnit
+        })
+      }
+    })
   },
 
   /**
@@ -119,8 +122,6 @@ Page({
     })
   },
   PreviewImage: function (e) {
-    console.log(e.currentTarget.id);
-    console.log(this.data.localfiles)
     wx.previewImage({
       current: e.currentTarget.id, // 当前显示图片的http链接
       urls: this.data.localfiles // 需要预览的图片http链接列表
@@ -255,13 +256,12 @@ Page({
         db.collection('Goods').doc(that.data.goodid).set({
           data: {
             GoodName: that.data.GoodName,
-            GoodPrice: that.data.GoodPrice,
-            GoodPrice_pur:that.data.GoodPrice_pur,
+            GoodPrice:parseInt(that.data.GoodPrice),
+            GoodPrice_pur: parseInt(that.data.GoodPrice_pur),
             GoodDescription: that.data.GoodDescription,
-            GoodReserve: that.data.GoodReserve,
+            GoodReserve: parseInt(that.data.GoodReserve),
             GoodUnit: that.data.GoodUnit,
-            Svolume: "",
-            Pvolume: "",
+            Svolume: 0,
             Files: that.data.Files
           },
           success: res => {
@@ -337,13 +337,12 @@ Page({
                 db.collection('Goods').doc(that.data.goodid).set({
                   data: {
                     GoodName: that.data.GoodName,
-                    GoodPrice: that.data.GoodPrice,
-                    GoodPrice_pur:that.data.GoodPrice_pur,
+                    GoodPrice: parseInt(that.data.GoodPrice),
+                    GoodPrice_pur: parseInt(that.data.GoodPrice_pur),
                     GoodDescription: that.data.GoodDescription,
-                    GoodReserve: that.data.GoodReserve,
+                    GoodReserve: parseInt(that.data.GoodReserve),
                     GoodUnit: that.data.GoodUnit,
-                    Svolume: "",
-                    Pvolume: "",
+                    Svolume: 0,
                     Files: newFiles
                   },
                   success: res => {
@@ -438,7 +437,6 @@ Page({
     })
     const db = wx.cloud.database();
     db.collection("Goods").where({
-      _openid: app.globalData.openid,
       GoodName: name
     }).get().then(res => {
       console.log("GetGoodsInformation", res.data[0])

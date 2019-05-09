@@ -8,17 +8,20 @@ Page({
   data: {
     avatarUrl: '../../images/user-unlogin.png',
     userInfo: {},
-    logged: false,
-    takeSession: false,
-    requestResult: '',
-    imgUrl: "",
-    username: "点击登陆"
+    stock_text:"暂无",
+    deadline_text:"暂无",
+    stock_status:false,
+    deadline_status:false,
+    stock:0,
+    deadline_time:0,
+    _id:""
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const that = this;
     wx.getSetting({
       success: res => {
         if (res.authSetting['scope.userInfo']) {
@@ -35,36 +38,98 @@ Page({
         }
       }
     })
+    const db =wx.cloud.database();
+    db.collection("data_status").get().then(res=>{
+      if(res.data=="")
+      {
+        let client = [];
+        db.collection("data_status").add({
+          data:{
+            goodUnit: ['个','斤','100个','千克','吨',"打","平方米","米"],
+            orderID:0,
+            discountoptions: ["无折扣", "9折", "8折"],
+            client:client,
+            stock:0,
+            deadline_time:0
+          },
+          success:res=>{
+            console.log(res)
+          }
+        })
+      }else
+        console.log(res)
+        
+    })
+    
   },
-
-  
-  // onGetUserInfo: function (e) {
-  //   this.onGetOpenid();
-  //   if (!this.data.logged && e.detail.userInfo) {
-  //     this.setData({
-  //       username:e.detail.userInfo.nickName,
-  //       logged: true,
-  //       avatarUrl: e.detail.userInfo.avatarUrl,
-  //       userInfo: e.detail.userInfo
-  //     })
-  //   }
-  // },
-  // onGetOpenid: function () {
-  //   // 调用云函数
-  //   wx.cloud.callFunction({
-  //     name: 'login',
-  //     data: {},
-  //     success: res => {
-  //       console.log('[云函数] [login] user openid: ', res.result.openid);
-  //       app.globalData.openid = res.result.openid;
-  //     },
-  //     fail: err => {
-  //       console.error('[云函数] [login] 调用失败', err)
-  //       wx.reLaunch({
-  //         url: '../Login/index',
-  //       })
-  //     }
-  //   })
-  // },
- 
+  onShow(){
+    const that = this
+    const db = wx.cloud.database();
+    db.collection('data_status').field({
+      stock:true,
+      deadline_time:true
+    }).get().then(res=>{
+      if(res.data[0].stock!=0)
+      {
+        const stock = res.data[0].stock;
+        db.collection("Goods").where({
+          GoodReserve: db.command.lte(stock)
+        }).get().then(res => {
+          if (res.data != "")
+            this.setData({
+              stock_status:true,
+              stock_text:"新警示"
+            })
+        })
+      }else{
+        this.setData({
+          stock_status: false,
+          stock_text: "暂无"
+        })
+      }
+      if(res.data[0].deadline_time!=0)
+      {
+        const deadline_time = res.data[0].deadline_time;
+        const date = that.deadlin_date(that.curentTime(""),deadline_time)
+        db.collection("Order").where({
+          paymentType:"赊账",
+          repaymentdate: db.command.lte(date)
+        }).get().then(res => {
+          if (res.data != "")
+            this.setData({
+              deadline_status:true,
+              deadline_text:"近期有账单哦"
+            })
+        })
+      } else {
+        this.setData({
+          deadline_status: false,
+          deadline_text: "暂无"
+        })
+      }
+    })
+  },
+  deadlin_date:function(today,deadline_time){
+    var deadlin_date;
+    let sDate1 = Date.parse(today);
+    deadlin_date = sDate1 + deadline_time * (24 * 3600 * 1000)
+    return this.curentTime(deadlin_date)
+  },
+  curentTime: function (e) {
+    if(e=="")
+      var now = new Date();
+    else
+      var now = new Date(e);
+    var year = now.getFullYear();       //年
+    var month = now.getMonth() + 1;     //月
+    var day = now.getDate();            //日
+    var clock = year + "-";
+    if (month < 10)
+      clock += "0";
+    clock += month + "-";
+    if (day < 10)
+      clock += "0";
+    clock += day;
+    return (clock);
+  }
 })

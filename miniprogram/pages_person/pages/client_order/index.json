@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "客户订单列表",
+  "usingComponents": {
+    "wux-prompt": "../../../miniprogram_npm/wux-weapp/prompt/index",
+    "wux-fab-button": "../../../miniprogram_npm/wux-weapp/fab-button/index",
+    "wux-filterbar": "../../../miniprogram_npm/wux-weapp/filterbar/index",
+    "wux-accordion-group": "../../../miniprogram_npm/wux-weapp/accordion-group/index",
+    "wux-accordion": "../../../miniprogram_npm/wux-weapp/accordion/index"
+  }
+}

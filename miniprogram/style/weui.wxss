@@ -289,6 +289,7 @@ icon {
           flex: 1;
   color: #3CC51F;
   text-align: center;
+  background-color: #FFFFFF;
 }
 .weui-form-preview__btn:after {
   content: " ";
@@ -298,13 +299,13 @@ icon {
   width: 1px;
   bottom: 0;
   border-left: 1rpx solid #D5D5D6;
-  color: #D5D5D6;
+  color: #FFFFFF;
 }
 .weui-form-preview__btn:first-child:after {
   display: none;
 }
 .weui-form-preview__btn_active {
-  background-color: #EEEEEE;
+  background-color: #FFFFFF;
 }
 .weui-form-preview__btn_default {
   color: #999999;
@@ -778,7 +779,7 @@ icon {
   left: 15px;
 }
 .weui-media-box {
-  padding: 15px;
+  padding: 10px;
   position: relative;
 }
 .weui-media-box:before {
@@ -807,9 +808,21 @@ icon {
   word-break: break-all;
 }
 .weui-media-box__desc {
-  color: #999999;
+  color: #8b8a8a;
+  margin-left: 5px;
   font-size: 13px;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.weui-media-box__good {
+  color: #5f5f5f;
+  margin-left: 10px;
+  font-size: 15px;
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -820,12 +833,13 @@ icon {
   margin-top: 15px;
   padding-bottom: 5px;
   font-size: 13px;
-  color: #CECECE;
+  color: #575757;
   line-height: 1em;
   list-style: none;
   overflow: hidden;
 }
 .weui-media-box__info__meta {
+  line-height: 1.5;
   float: left;
   padding-right: 1em;
 }

@@ -12,7 +12,6 @@ App({
         traceUser: true,
       })
     }
-    this.globalData = {}
   },
 
   /**
@@ -33,6 +32,6 @@ App({
    */
   onError: function (msg) {
     
-  }
+  },
 })
 

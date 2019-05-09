@@ -1,1 +1,6 @@
-/* pages/AddSalesOrders/index.wxss */
+
+.footer_button{
+  bottom: 30px;
+  left:0;
+  right:0;
+}

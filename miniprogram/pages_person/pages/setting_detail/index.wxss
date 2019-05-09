@@ -1,0 +1,25 @@
+.footer_button{
+  bottom: 30px;
+  left:0;
+  right:0;
+}
+.page{
+  background-color: #ffffff;
+}
+.i-cell-padding{
+    padding:5px 0px!important;
+    font-size:10px;
+}
+.i-swipeout-demo-title{
+    height:30px;
+    padding:0 15px;
+    line-height:30px;
+    margin-top:20px;
+    margin-bottom:5px;
+}
+.message_unit{
+  font-size:12px;
+  background-color: #fafafa;
+  height: 16px;
+  text-align:center;
+}

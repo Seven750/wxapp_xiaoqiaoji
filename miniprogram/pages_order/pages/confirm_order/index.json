@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "订单收款",
+  "usingComponents": {
+    "i-button": "../../../dist/button/index",
+    "wux-cell-group": "../../../miniprogram_npm/wux-weapp/cell-group/index",
+    "wux-cell": "../../../miniprogram_npm/wux-weapp/cell/index",
+    "wux-input": "../../../miniprogram_npm/wux-weapp/input/index",
+    "wux-upload": "../../../miniprogram_npm/wux-weapp/upload/index",
+    "wux-textarea": "../../../miniprogram_npm/wux-weapp/textarea/index",
+    "wux-select": "../../../miniprogram_npm/wux-weapp/select/index",
+    "wux-switch": "../../../miniprogram_npm/wux-weapp/switch/index",
+    "wux-toptips": "../../../miniprogram_npm/wux-weapp/toptips/index"
+  }
+}

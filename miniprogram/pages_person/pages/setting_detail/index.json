@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "设置",
+  "usingComponents": {
+    "wux-cell-group": "../../../miniprogram_npm/wux-weapp/cell-group/index",
+    "wux-cell": "../../../miniprogram_npm/wux-weapp/cell/index",
+    "wux-fab-button": "../../../miniprogram_npm/wux-weapp/fab-button/index",
+    "wux-input": "../../../miniprogram_npm/wux-weapp/input/index",
+    "i-button": "../../../dist/button/index",
+    "i-swipeout": "../../../dist/swipeout/index",
+    "i-cell": "../../../dist/cell/index",
+    "wux-switch": "../../../miniprogram_npm/wux-weapp/switch/index",
+    "wux-toptips": "../../../miniprogram_npm/wux-weapp/toptips/index"
+  }
+}

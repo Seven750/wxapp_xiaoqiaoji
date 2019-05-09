@@ -1,7 +1,5 @@
 import pinyin from "../../miniprogram_npm/tiny-pinyin/index"
 
-const app = getApp()
-
 Page({
   data: {
     actionRotate:false,
@@ -36,7 +34,6 @@ Page({
     wx.cloud.callFunction({
       name: "GetGoodsList",
       data: {
-        userid: app.globalData.openid,
       },
       success: res => {
         console.log(res);

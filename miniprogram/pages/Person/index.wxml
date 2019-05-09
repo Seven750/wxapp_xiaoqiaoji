@@ -1,5 +1,5 @@
 <view class="page">
-    <view class='userinfo'>
+  <view class='userinfo'>
     <open-data type="userAvatarUrl" class="userinfo-avatar"></open-data>
     <view>
       <open-data type="userNickName" lang="zh_CN" class="userinfo-nickname"></open-data>
@@ -9,6 +9,30 @@
       </view>
     </view>
   </view>
+  <wux-cell-group>
+    <wux-cell title="客户列表" is-link url="../../pages_person/pages/client/index" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
+  <view class="weui-cells weui-cells_after-title">
+    <navigator url="../../pages_person/pages/deadline_order/index" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">收账提醒</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"  style="font-size: 0">
+          <view style="display: inline-block;vertical-align:middle; font-size: 17px;">{{deadline_text}}</view>
+          <view class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;" wx:if="{{deadline_status}}"></view>
+        </view>
+    </navigator>
+  </view>
+  <view class="weui-cells weui-cells_after-title">
+    <navigator url="../../pages_person/pages/warn_stock/index" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">库存警示</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">
+          <view style="display: inline-block;vertical-align:middle; font-size: 17px;">{{stock_text}}</view>
+          <view class="weui-badge weui-badge_dot" style="margin-left: 5px;margin-right: 5px;" wx:if="{{stock_status}}"></view>
+        </view>
+    </navigator>
+  </view>
+  <wux-cell-group title="   ">
+    <wux-cell title="设置" is-link url="../../pages_person/pages/setting/index" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
   <view class="weui-footer weui-footer_fixed-bottom">
       <view class="weui-footer__text">联系方式:aeaioum@163.com</view>
   </view>

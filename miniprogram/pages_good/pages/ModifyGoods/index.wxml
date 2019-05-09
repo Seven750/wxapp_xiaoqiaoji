@@ -28,7 +28,7 @@
                  <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
                 </wux-input>
             </wux-cell>
-            <wux-cell>
+            <wux-cell wx:if="{{localfiles!=''}}">
               <view class="weui-uploader">
                 <view class="weui-uploader__hd">
                     <view class="weui-uploader__title">图片上传</view>

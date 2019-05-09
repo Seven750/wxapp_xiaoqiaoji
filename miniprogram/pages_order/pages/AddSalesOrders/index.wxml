@@ -1,6 +1,8 @@
 <wux-toptips id="wux-toptips" />
 <wux-select id="selectgood" />
 <wux-select id="selectpaymentType" />
+<wux-select id="selectdiscount" />
+<wux-select id="selectremoval" />
 <view class='page'>
   <view class='page_bd'>
     <wux-cell-group title="填写订单信息">
@@ -11,7 +13,7 @@
       <wux-input label="客户名" type='text' bind:blur="Getclientname" value='{{clientname}}' controlled = "true"/>
     </wux-cell>
     </wux-cell-group>
-    <wux-cell-group title="填写货物信息" >
+    <wux-cell-group title="填写货物信息" label="总金额：{{total_amount}} 元">
       <wux-cell title="选择货物" extra="{{ title }}" is-link bind:click="onchangegood"></wux-cell>
       <block wx:for="{{GoodName}}" wx:key="*this">
         <wux-cell>
@@ -56,22 +58,25 @@
         </view>
       </wux-cell>
     </wux-cell-group>
-    
-    <wux-cell-group title="结账类型" label="预付款：{{depositnum}}元   总金额：{{total_amount + depositnum}} 元  应付：{{total_amount }}元 ">
+    <wux-cell-group title="结账类型" label="预付款：{{depositnum}}元   应付：{{after_disc_rem_total}}元 ">
       <wux-cell title="结账方式" is-link extra="{{ paymentType }}" bind:click="onpaymentType"></wux-cell>
       <view class="weui-cell weui-cell_input" wx:if="{{payvalue=='赊账'}}">
         <view class="weui-cell__hd">
             <view class="weui-label">预计结款日期</view>
         </view>
         <view class="weui-cell__bd">
-            <picker mode="date" value="{{date}}" start="2010-09-01" end="{{2099-09-01}}" bindchange="bindDateChange">
-                <view class="weui-input">{{date}}</view>
+            <picker mode="date" value="{{repaymentdate}}" start="2010-09-01" end="{{2099-09-01}}" bindchange="bindDateChange">
+                <view class="weui-input">{{repaymentdate}}</view>
             </picker>
         </view>
       </view>
-      <wux-cell wx:if="{{payvalue=='现结'}}">
+      <block wx:if="{{payvalue=='现结'}}">
+      <wux-cell title="折扣" is-link extra="{{ discount }}" bind:click="ondiscountType"></wux-cell>
+      <wux-cell title="抹零" is-link extra="{{ removal }}" bind:click="onremoval"></wux-cell>
+      <wux-cell>
         <wux-input label="付款金额" type='digit' bind:blur="getpayAmount" value='{{payamount}}' controlled = "true"/>
       </wux-cell>
+      </block>
     </wux-cell-group>
   </view>
   <view class='footer_button'>

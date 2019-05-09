@@ -1,0 +1,74 @@
+<view class="weui-tab__content" wx:if="{{!status}}">
+    <wux-prompt visible="{{ true}}" icon="{{ msg.icon }}" title="{{ msg.title }}" text="{{ msg.text }}" />
+</view>
+<view class="page" wx:if="{{status}}">
+  <view class="page__bd">
+    <wux-filterbar items="{{ items }}" bind:change="onChangefilter"  />
+    <wux-accordion-group  accordion controlled="true" current='{{current}}' bind:change="onChangeaccordion">
+      <block wx:for="{{ orders }}" wx:key="">
+      <wux-accordion title="{{item.category}}订单ID:{{item.orderID}}">
+          <view class="weui-form-preview__hd" wx:if="{{item.paymentType=='现结'}}">
+              <view class="weui-form-preview__label">最终付款：</view>
+              <view class="weui-form-preview__value_in-hd">{{item.after_disc_rem_total}}元</view>
+          </view>
+          <view class="weui-form-preview__hd" wx:if="{{item.paymentType=='赊账'}}">
+              <view class="weui-form-preview__label">结账日期：</view>
+              <view class="weui-form-preview__value_in-hd">{{item.repaymentdate}}</view>
+          </view>
+          <view class="weui-form-preview__bd">
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">订金/定金/预付款：</view>
+                <view class="weui-form-preview__value">{{item.depositnum}}</view>
+            </view>
+            <view class="weui-form-preview__item" wx:if="{{item.paymentType=='现结'}}">
+                <view class="weui-form-preview__label">折扣：</view>
+                <view class="weui-form-preview__value">{{item.discount}}</view>
+            </view>
+            <view class="weui-form-preview__item" wx:if="{{item.paymentType=='现结'}}">
+                <view class="weui-form-preview__label">抹零：</view>
+                <view class="weui-form-preview__value">{{item.removal}}</view>
+            </view>
+            <view class="weui-form-preview__item" wx:if="{{item.orderDescription !=''}}">
+                <view class="weui-form-preview__label">订单描述：</view>
+                <view class="weui-form-preview__value">{{item.orderDescription}}</view>
+            </view>
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">订单货物：</view>
+                <block wx:for="{{item.order_good}}" wx:key="">
+                <view class="weui-form-preview__value">{{item.GoodName}}：{{item.valueunit}}{{item.GoodUnit}}<text decode='true'>&nbsp;&nbsp;</text>共计：{{item.amount}}元</view>
+                </block>
+            </view>
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">客户：</view>
+                <view class="weui-form-preview__value">{{item.clientname}}</view>
+            </view>
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">支付方式：</view>
+                <view class="weui-form-preview__value">{{item.paymentType}}</view>
+            </view>
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">订单总金额：</view>
+                <view class="weui-form-preview__value">{{item.total_amount}}</view>
+            </view>
+            <view class="weui-form-preview__item">
+                <view class="weui-form-preview__label">订单生成时间：</view>
+                <view class="weui-form-preview__value">{{item.order_time}}</view>
+            </view>
+            <view class="weui-uploader" wx:if="{{localfiles!=''&&localfiles!=[]}}">
+              <view class="weui-uploader__bd">
+                <block wx:for="{{localfiles}}" wx:key="*this">
+                    <view class="weui-uploader__file" bindtap="PreviewImage" id="{{item}}">
+                        <image class="weui-uploader__img" src="{{item}}" mode="aspectFit" />
+                    </view>
+                </block>
+              </view>
+            </view>
+          </view>
+          <view class="weui-form-preview__ft">
+              <button type="balanced" class="weui-form-preview__btn "  wx:if="{{item.paymentType=='赊账'}}" bindtap="confirm" id="{{index}}">确认收账</button>
+          </view>
+      </wux-accordion>
+      </block>
+    </wux-accordion-group>
+  </view>
+</view>
