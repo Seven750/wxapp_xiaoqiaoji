@@ -12,12 +12,12 @@
     </wux-cell-group>
     <wux-cell-group title="填写货物信息" label="总金额：{{total_amount}} 元">
       <wux-cell title="选择货物" extra="{{ title }}" is-link bind:click="onchangegood"></wux-cell>
-      <block wx:for="{{GoodName}}" wx:key="*this">
+      <block wx:for="{{GoodName}}" wx:key="">
         <wux-cell>
-          <wux-input label="{{item}}" type='digit' id="{{index}}" bind:blur="getPrice">
-            <view slot="footer">{{ options[index].GoodUnit}}</view>
+          <wux-input label="{{item.GoodName}}" type='digit' id="{{index}}" bind:blur="getPrice" >
+            <view slot="footer">{{ item.Unit}}</view>
           </wux-input>
-      </wux-cell> 
+        </wux-cell> 
       </block>
     </wux-cell-group>
     <wux-cell-group title="备注" >

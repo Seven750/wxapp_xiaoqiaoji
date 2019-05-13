@@ -1,7 +1,5 @@
-.footer_tabbar{
-  margin-bottom: 0;
-  position:fixed;
-  bottom:.52em;
+.footer_button{
+  bottom: 30px;
   left:0;
   right:0;
 }

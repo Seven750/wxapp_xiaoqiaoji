@@ -210,7 +210,8 @@ Page({
       const files = this.data.orders[parseInt(e.detail.key)].Files;
       if (files == "") {
         this.setData({
-          current: current
+          current: current,
+          localfiles:[]
         })
         return;
       }
@@ -226,7 +227,8 @@ Page({
       return
     } else {
       this.setData({
-        current: []
+        current: [],
+        localfiles:[]
       })
     }
   },

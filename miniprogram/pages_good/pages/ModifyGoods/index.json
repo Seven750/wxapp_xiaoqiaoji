@@ -8,6 +8,7 @@
     "wux-upload": "../../../miniprogram_npm/wux-weapp/upload/index",
     "wux-textarea": "../../../miniprogram_npm/wux-weapp/textarea/index",
     "wux-toptips": "../../../miniprogram_npm/wux-weapp/toptips/index",
-    "wux-select": "../../../miniprogram_npm/wux-weapp/select/index"
+    "wux-select": "../../../miniprogram_npm/wux-weapp/select/index",
+    "wux-image": "../../../miniprogram_npm/wux-weapp/image/index"
   }
 }

@@ -94,7 +94,6 @@ Page({
     console.log('onChange', e.detail)
   },
   onselect:function(e){
-    console.log(e)
     wx.navigateTo({
       url: '../../pages_good/pages/ModifyGoods/index?GoodName='+e.currentTarget.id,
     })

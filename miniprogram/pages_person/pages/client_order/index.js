@@ -194,7 +194,8 @@ Page({
       if (files == "")
       {
         this.setData({
-        current: current
+        current: current,
+        localfiles: []
         })
         return;
       }
@@ -210,7 +211,8 @@ Page({
       return
     } else {
       this.setData({
-        current: []
+        current: [],
+        localfiles: []
       })
     }
   },

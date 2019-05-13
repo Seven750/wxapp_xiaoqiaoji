@@ -67,7 +67,7 @@
                 <view class="weui-form-preview__label">结账时间：</view>
                 <view class="weui-form-preview__value">{{item.confirmTime}}</view>
             </view>
-            <view class="weui-form-preview__item" wx:if="{{item.category!='进货'}}">
+            <view class="weui-form-preview__item" wx:if="{{item.category!='进货'&&item.paymentType!='赊账'}}">
                 <view class="weui-form-preview__label">本单利润：</view>
                 <view class="weui-form-preview__value">{{item.profit}}元</view>
             </view>
@@ -75,7 +75,9 @@
               <view class="weui-uploader__bd">
                 <block wx:for="{{localfiles}}" wx:key="*this">
                     <view class="weui-uploader__file" bindtap="PreviewImage" id="{{item}}">
-                        <image class="weui-uploader__img" src="{{item}}" mode="aspectFit" />
+                        <wux-image class="weui-uploader__img" src="{{item}}" mode="aspectFit">
+                          <image src="https://image.weilanwl.com/gif/loading-1.gif" slot="loading" style='height:80px;width:80px;'/>
+                        </wux-image>
                     </view>
                 </block>
               </view>
@@ -87,6 +89,12 @@
       </wux-accordion>
       </block>
     </wux-accordion-group>
+    <view class="page__bd_spacing " wx:if="{{hidden}}">
+      <wux-pagination current="{{ current_page }}" total="{{total}}" mode="button" controlled bind:change="onchangePage">
+            <view slot="prev">上一页</view>
+            <view slot="next">下一页</view>
+        </wux-pagination>
+    </view>
   </view>
 </view>
 

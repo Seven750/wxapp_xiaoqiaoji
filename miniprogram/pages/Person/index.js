@@ -21,6 +21,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    let now = new Date();
+    let year = [];
+    year.push(now.getFullYear());
     const that = this;
     wx.getSetting({
       success: res => {
@@ -42,6 +45,8 @@ Page({
     db.collection("data_status").get().then(res=>{
       if(res.data=="")
       {
+        let year = now.getFullYear();
+        console.log(year)
         let client = [];
         db.collection("data_status").add({
           data:{
@@ -50,17 +55,42 @@ Page({
             discountoptions: ["无折扣", "9折", "8折"],
             client:client,
             stock:0,
-            deadline_time:0
+            deadline_time:0,
+            use_year:year
           },
           success:res=>{
             console.log(res)
           }
         })
       }else
-        console.log(res)
+      {
+        db.collection('data_status').where({
+          use_year:db.command.in([2019])
+        }).field({
+          use_year:true
+        }).get({
+          success:res=>{
+            if(res.data==[])
+            {
+              db.collection("data_status").field({
+                _id:true
+              }).get().then(res => {
+                db.collection("data_status").doc(res.data[0]._id).update({
+                  data:{
+                    use_year:db.command.unshift(year)
+                  }
+                })
+              })
+            }
+          }
+        })
+      }
         
     })
     
+  },
+  onPullDownRefresh: function () {
+
   },
   onShow(){
     const that = this
@@ -69,6 +99,8 @@ Page({
       stock:true,
       deadline_time:true
     }).get().then(res=>{
+      if(res.data=="")
+        return;
       if(res.data[0].stock!=0)
       {
         const stock = res.data[0].stock;

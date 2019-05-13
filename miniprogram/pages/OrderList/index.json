@@ -6,6 +6,7 @@
     "wux-filterbar": "../../miniprogram_npm/wux-weapp/filterbar/index",
     "wux-accordion-group": "../../miniprogram_npm/wux-weapp/accordion-group/index",
     "wux-accordion": "../../miniprogram_npm/wux-weapp/accordion/index",
-    "wux-button": "../../miniprogram_npm/wux-weapp/button/index"
+    "wux-pagination": "../../miniprogram_npm/wux-weapp/pagination/index",
+    "wux-image": "../../miniprogram_npm/wux-weapp/image/index"
   }
 }

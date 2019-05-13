@@ -7,7 +7,7 @@ Page({
    */
   data: {
     openid:"",
-    types:"",
+    types:[],
     Files: [],
     localfiles: [],
     GoodName:"",
@@ -24,13 +24,19 @@ Page({
    */
   onLoad: function (options) {
     const that = this
-    wx.getStorage({
-      key: 'persondata',
-      success(res) {
+    const db = wx.cloud.database();
+    db.collection("data_status").field({
+      goodUnit:true
+    }).get().then(res=>{
       console.log(res)
-       that.setData({
-         types:res.data.goodUnit
-       }) 
+      const types = res.data[0].goodUnit;
+      if(types!="")
+      {
+        that.setData({
+          types,
+        })
+      }else{
+        GoodUnit:"请现在设置中添加单位"
       }
     })
     

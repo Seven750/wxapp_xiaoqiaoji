@@ -34,12 +34,12 @@ baseComponent({
         },
         width: {
             type: null,
-            value: 300,
+            value: 80,
             observer: 'updateStyle',
         },
         height: {
             type: null,
-            value: 225,
+            value: 80,
             observer: 'updateStyle',
         },
         unmountOnEmpty: {

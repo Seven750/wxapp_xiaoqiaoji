@@ -55,11 +55,25 @@
                 <view class="weui-form-preview__label">订单生成时间：</view>
                 <view class="weui-form-preview__value">{{item.order_time}}</view>
             </view>
+            <view class="weui-form-preview__item" wx:if="{{item.paymentType=='已收账'||item.paymentType=='赊账'}}">
+                <view class="weui-form-preview__label">订单预计结账日期：</view>
+                <view class="weui-form-preview__value">{{item.repaymentdate}}</view>
+            </view>
+            <view class="weui-form-preview__item" wx:if="{{item.paymentType=='已收账'}}">
+                <view class="weui-form-preview__label">结账时间：</view>
+                <view class="weui-form-preview__value">{{item.confirmTime}}</view>
+            </view>
+            <view class="weui-form-preview__item" wx:if="{{item.category!='进货'&&item.paymentType!='赊账'}}">
+                <view class="weui-form-preview__label">本单利润：</view>
+                <view class="weui-form-preview__value">{{item.profit}}元</view>
+            </view>
             <view class="weui-uploader" wx:if="{{localfiles!=''&&localfiles!=[]}}">
               <view class="weui-uploader__bd">
                 <block wx:for="{{localfiles}}" wx:key="*this">
                     <view class="weui-uploader__file" bindtap="PreviewImage" id="{{item}}">
-                        <image class="weui-uploader__img" src="{{item}}" mode="aspectFit" />
+                        <wux-image class="weui-uploader__img" src="{{item}}" mode="aspectFit">
+                          <image src="https://image.weilanwl.com/gif/loading-1.gif" slot="loading" style='height:80px;width:80px;'/>
+                        </wux-image>
                     </view>
                 </block>
               </view>

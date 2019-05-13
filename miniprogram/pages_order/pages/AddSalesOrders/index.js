@@ -34,6 +34,7 @@ Page({
    * 预付金是否大于的订单总金额的状态
    * 保存按钮是否disable
    * 结款日期
+   * 减去预付金的金额
    * 折扣后
    * 最后总金额
    * 出售量大于库存量的货物
@@ -67,6 +68,7 @@ Page({
     depositnum_errstatus: false,
     savestatus:false,
     repaymentdate: "选择日期",
+    after_deposit:0,
     after_disc_total:0,
     after_disc_rem_total:0,
     worrygood:"",
@@ -77,14 +79,13 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
     if(options.client!="none")
     {
       this.setData({
         clientname: options.client
       })
     }
-      
+    order_good=[]
     wx.showLoading({
       title: '正在加载',
     })
@@ -100,7 +101,6 @@ Page({
       discountoptions:true,
       orderID:true
     }).get().then(res => {
-      console.log(res.data)
       let i = "00000000";
       let orderid = res.data[0].orderID + 1
       while (orderid > 0) {
@@ -249,7 +249,11 @@ Page({
           order_good=[];
         this.setData({
           goodvalue: value,
-          GoodName: index.map((n) => options[n].GoodName),
+          GoodName: index.map((n) => {
+            let arr={}
+            arr.GoodName=options[n].GoodName
+            arr.Unit=options[n].GoodUnit
+            return arr}),
           title: "已选" + value.length + "个货物",
         },()=>console.log(that.data.GoodName))
         var total_amount =0
@@ -326,12 +330,12 @@ Page({
         if (index !== -1) {
           switch (index) {
             case 0: this.setData({
-              after_disc_rem_total:that.data.after_disc_total,
+              after_disc_rem_total: that.data.after_disc_total,
               removalvalue: value,
               removal: options[index]
             });break;
             case 1: this.setData({
-              after_disc_rem_total:arr[0],
+              after_disc_rem_total:parseInt(arr[0]),
               removalvalue: value,
               removal: options[index]
             }); break;
@@ -339,13 +343,11 @@ Page({
             if(arr[0].length>0)
             {
               var str = arr[0].slice(0,-1);
-              console.log(str)
               if(str.length>0)
                 str = str +"0"
               else str = "0"
-              console.log(str)
               this.setData({
-                after_disc_rem_total:str,
+                after_disc_rem_total:parseInt(str),
                 removalvalue: value,
                 removal: options[index]
               }); 
@@ -361,7 +363,7 @@ Page({
               else str = "0"
               console.log(str)
               this.setData({
-                after_disc_rem_total: str,
+                after_disc_rem_total: parseInt(str),
                 removalvalue: value,
                 removal: options[index]
               });
@@ -375,7 +377,7 @@ Page({
                 str = str + "000"
               else str = "0"
               this.setData({
-                after_disc_rem_total: str,
+                after_disc_rem_total: parseInt(str),
                 removalvalue: value,
                 removal: options[index]
               });
@@ -389,7 +391,7 @@ Page({
                 str = str + "0000"
               else str = "0"
               this.setData({
-                after_disc_rem_total: str,
+                after_disc_rem_total:parseInt(str),
                 removalvalue: value,
                 removal: options[index]
               });
@@ -407,13 +409,8 @@ Page({
       removalvalue: "0",
       removal: "无折扣"
     }); 
-    $wuxToptips().show({
-      icon: 'cancel',
-      hidden: false,
-      text: '折扣力度大于总金额',
-      duration: 1500,
-      success() { },
-    })
+    const text = '折扣力度大于总金额'
+    this.tipsmessage(text)
   },
   bindDateChange: function (e) {
     this.setData({
@@ -435,7 +432,9 @@ Page({
   onChangedep_status(e) {
     this.setData({
       depositnum:0,
-      deposit_status: e.detail.value
+      deposit_status: e.detail.value,
+      after_disc_rem_total: this.data.after_disc_rem_total + this.data.depositnum,
+      after_disc_total:this.data.after_disc_total+this.data.depositnum
     })
   },
    curentTime:function(e)
@@ -466,25 +465,15 @@ Page({
     
   },
   GetorderID: function (e) {
-    $wuxToptips().show({
-      icon: 'cancel',
-      hidden: false,
-      text: '不建议修改，否则下次订单号将从此重新计算',
-      duration: 2000,
-      success() { },
-    })
+    let text = '不建议修改，否则下次订单号将从此重新计算'
+    this.tipsmessage(text)
     if (/^\d+$/.test(e.detail.value))
       this.setData({
         orderID: e.detail.value
       })
     else{
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: '订单号需为纯数字',
-        duration: 1000,
-        success() { },
-      })
+      const text = '订单号需为纯数字'
+      this.tipsmessage(text)
     }
   },
   Getclientname: function (e) {
@@ -502,16 +491,13 @@ Page({
     if(depositnum == "") depositnum =0; 
     var total_amount = 0
     if (this.data.depositnum==0)
-      total_amount = parseInt(this.data.after_disc_rem_total) -parseInt(depositnum)
+      total_amount = parseInt(this.data.total_amount) -parseInt(depositnum)
     else
-      total_amount = parseInt(this.data.after_disc_rem_total) +parseInt(this.data.depositnum)  -parseInt(depositnum)
+      total_amount = parseInt(this.data.total_amount) +parseInt(this.data.depositnum)  -parseInt(depositnum)
     if(total_amount<0)
-    {$wuxToptips().show({
-        hidden: false,
-        text: '预付金额大于总订单需支付金额',
-        duration: 2000,
-        success() { },
-      })
+    {
+      const text = '预付金额大于总订单需支付金额';
+      that.tipsmessage(text)
       this.setData({
         depositnum_errstatus:true
       })
@@ -520,7 +506,8 @@ Page({
     this.setData({
       depositnum_errstatus:false,
       depositnum: parseInt(depositnum),
-      after_disc_rem_total:total_amount
+      after_disc_rem_total:total_amount,
+      after_disc_total: total_amount
     })
   },
   getPrice:function(e){
@@ -532,13 +519,8 @@ Page({
     order_good[id].valueunit = value;
     if(parseInt(value) >parseInt(order_good[id].GoodReserve))
     {
-      $wuxToptips().show({
-        icon: 'cancel',
-        hidden: false,
-        text: order_good[id].GoodName+ '已超出目前' + order_good[id].GoodReserve + order_good[id].GoodUnit + "的库存量",
-        duration: 2000,
-        success() { },
-      })
+      const text = order_good[id].GoodName + '已超出目前' + order_good[id].GoodReserve + order_good[id].GoodUnit + "的库存量"
+      that.tipsmessage(text)
       return 
     }
     //货物此次出售了多少单位的货
@@ -548,6 +530,7 @@ Page({
       total_amount += order_good[i].amount
     this.setData({
       total_amount,
+      after_deposit: total_amount,
       after_disc_rem_total:total_amount,
       after_disc_total:total_amount
     })
@@ -563,6 +546,7 @@ Page({
     })
   },
   onAdd: function () {
+    var status_success=1;
     var that = this;
     if (that.data.orderID == "" || that.data.orderID == null) {
       that.tipsmessage("请先填写订单号")
@@ -594,17 +578,11 @@ Page({
       for (let t = 0; t < order_good.length; t++) {
         if (order_good[t].valueunit > order_good[t].GoodReserve) {
           status++;
-          $wuxToptips().show({
-            icon: 'cancel',
-            hidden: false,
-            text: order_good[t].GoodName + '已超出目前' + order_good[t].GoodReserve + order_good[t].GoodUnit + "的库存量",
-            duration: 2000,
-            success() { },
-          })
+          const text = order_good[t].GoodName + '已超出目前' + order_good[t].GoodReserve + order_good[t].GoodUnit + "的库存量"
+          that.tipsmessage(text)
           break;
         }
       }
-      console.log(status)
       if(status !=0)
         return;
     }else{
@@ -629,19 +607,22 @@ Page({
       //先更新货物当中的库存信息
       for (let m = 0; m < order_good.length; m++) {
         profit += parseInt(order_good[m].valueunit)*order_good[m].GoodPrice_pur
+        console.log(profit)
         db.collection("Goods").doc(order_good[m]._id).update({
           data: {
             Svolume: db.command.inc(parseInt(order_good[m].valueunit)),
             GoodReserve: parseInt(order_good[m].GoodReserve) - parseInt(order_good[m].valueunit)
           },
           fail: () => {
+            status_success=0;
             that.openAlert("更新货物库存失败")
+            return;
             console.error
           }
         })
       }
-      if (length == 0) {
-        //如果用户没有上传图片，那么就直接上传货物信息
+      if (length == 0 && status_success!=0) {
+        //如果用户没有上传图片，那么就直接上传订单信息
         db.collection('Order').add({
           data: {
             orderID: that.data.orderID,
@@ -661,14 +642,19 @@ Page({
             Files: that.data.Files,
             repaymentdate: that.data.repaymentdate,
             createTime: db.serverDate(),
-            profit: that.data.after_disc_rem_total-profit
+            profit: parseInt(that.data.payamount) + that.data.depositnum - profit
           },
           success: res => {
-            let client = []
-            client.push(that.data.clientname)
+            let client = {}
+            client.name = that.data.clientname;
+            client.profit = profit;
             console.log(client)
             db.collection("data_status").where({
-              client:db.command.in(client)
+              client:{
+                name:that.data.clientname
+              }
+            }).field({
+              client:true
             }).get({
               success:res=>{
                 console.log(res)
@@ -679,19 +665,31 @@ Page({
                       client: db.command.push(client)
                     },
                     success:res=>console.log(res)
-                    
                   })
                 else
-                db.collection("data_status").doc(this.data.data_status_id).update({
-                  data: {
-                    orderID: parseInt(that.data.orderID)
+                {
+                  let updateclient = res.data[0].client
+                  for(let i =0;i<updateclient.length;i++)
+                  {
+                    if (updateclient[i].name == that.data.clientname){
+                      updateclient[i].profit += profit
+                      break;
+                    }
                   }
-                })
+                  db.collection("data_status").doc(that.data.data_status_id).update({
+                    data: {
+                      orderID: parseInt(that.data.orderID),
+                      client: updateclient
+                    },
+                    success:console.log,
+                    fail:console.error
+                  })
+                }
               },
               fail: console.error
             })
             wx.showToast({
-              title: '新增记录成功',
+              title: '新增订单成功',
             })
             console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
           },
@@ -708,7 +706,7 @@ Page({
         })
         //下面的for循环就不会执行
       }
-      else {
+      else if (status_success!=0){
         //记录循环已经执行了的次数
         let filestimes = 0
         for (let j = 0; j < length; j++) {
@@ -757,36 +755,54 @@ Page({
                     Files: that.data.Files,
                     repaymentdate: that.data.repaymentdate,
                     createTime: db.serverDate(),
-                    profit: that.data.after_disc_rem_total - profit
+                    profit:parseInt(that.data.payamount)+ that.data.depositnum - profit
                   },
                   success: res => {
-                    let client = []
-                    client.push(that.data.clientname)
+                    let client = {}
+                    client.name = that.data.clientname;
+                    client.profit = profit;
                     console.log(client)
                     db.collection("data_status").where({
-                      client: db.command.in(client)
+                      client: {
+                        name: that.data.clientname
+                      }
+                    }).field({
+                      client: true
                     }).get({
                       success: res => {
-                        if (res.data == "") 
-                        db.collection("data_status").doc(this.data.data_status_id).update({
-                          data: {
-                            orderID: parseInt(that.data.orderID),
-                            client: db.command.push(client)
-                          },
-                          success: res => console.log(res)
-                        })
-                        else 
-                        db.collection("data_status").doc(this.data.data_status_id).update({
-                          data: {
-                            orderID: parseInt(that.data.orderID)
+                        console.log(res)
+                        if (res.data == "")
+                          db.collection("data_status").doc(this.data.data_status_id).update({
+                            data: {
+                              orderID: parseInt(that.data.orderID),
+                              client: db.command.push(client)
+                            },
+                            success: res => console.log(res)
+                          })
+                        else {
+                          let updateclient = res.data[0].client
+                          for (let i = 0; i < updateclient.length; i++) {
+                            if (updateclient[i].name == that.data.clientname) {
+                              updateclient[i].profit += profit
+                              break;
+                            }
                           }
-                        })
+                          db.collection("data_status").doc(that.data.data_status_id).update({
+                            data: {
+                              orderID: parseInt(that.data.orderID),
+                              client: updateclient
+                            },
+                            success: console.log,
+                            fail: console.error
+                          })
+                        }
                       },
                       fail: console.error
                     })
                     wx.showToast({
                       title: '新增订单成功',
                     })
+                    console.log('[数据库] [新增记录] 成功，记录 _id: ', res._id)
                   },
                   fail: err => {
                     that.openAlert("新增订单失败")

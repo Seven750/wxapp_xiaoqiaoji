@@ -12,6 +12,9 @@
   <wux-cell-group>
     <wux-cell title="客户列表" is-link url="../../pages_person/pages/client/index" open-type="navigateTo"></wux-cell>
   </wux-cell-group>
+  <wux-cell-group>
+    <wux-cell title="销售统计" is-link url="../../pages_charts/pages/sale_month/index" open-type="navigateTo"></wux-cell>
+  </wux-cell-group>
   <view class="weui-cells weui-cells_after-title">
     <navigator url="../../pages_person/pages/deadline_order/index" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
         <view class="weui-cell__bd">收账提醒</view>

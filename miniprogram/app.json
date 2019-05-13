@@ -26,7 +26,10 @@
     {
       "root": "pages_charts",
       "name": "charts",
-      "pages": []
+      "pages": [
+        "pages/sale_month/index",
+        "pages/abc/index"
+      ]
     },
     {
       "root": "pages_person",
@@ -38,6 +41,7 @@
         "pages/setting_detail/index",
         "pages/deadline_order/index",
         "pages/warn_stock/index"
+        
       ]
     }
   ],

@@ -18,7 +18,6 @@ Page({
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
           wx.getUserInfo({
             success: res => {
-              console.log(res)
               wx.switchTab({
                 url: '../Person/index'
               })
@@ -32,7 +31,6 @@ Page({
 
   onGetUserInfo: function (e) {
     const that =this;
-    console.log(e)
     if (e.detail.errMsg =="getUserInfo:fail auth deny")
     {
       that.openConfirm();

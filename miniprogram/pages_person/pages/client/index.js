@@ -1,7 +1,7 @@
 import pinyin from "../../../miniprogram_npm/tiny-pinyin/index"
 Page({
   data: {
-    names: [],
+    client: [],
     alphabet: [],
     status: true,
     activeIndex: 0,
@@ -24,7 +24,6 @@ Page({
     })
     const alphabet = [];
     const list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#';
-    //从云函数中拿到属于用户自己的数据
     const db = wx.cloud.database();
     db.collection('data_status').field({
       client: true
@@ -35,9 +34,9 @@ Page({
           status: false
         }, () => wx.hideLoading())
       }else{
-        const client = res.data[0].client;
+        const client = this.getclientname(res.data[0].client);
         that.setData({
-          names: client,
+          client: client,
         }, function () {
           //每个字母都循环的比较goodsname里面是否有符合的
           list.split('').forEach((initial) => {
@@ -76,6 +75,12 @@ Page({
         })
       }
     }).catch(console.error)
+  },
+  getclientname:function(client){
+    var name = [];
+    for(let i = 0;i<client.length;i++)
+      name.push(client[i].name)
+    return name
   },
   onChange: function (e) {
     console.log('onChange', e.detail)

@@ -463,6 +463,7 @@ Page({
         GoodDescription: des,
         GoodReserve: res.data[0].GoodReserve,
         GoodUnit: res.data[0].GoodUnit,
+        Svolume: res.data[0].Svolume,
         localfiles: picfiles,
         Files: res.data[0].Files,
         goodid: res.data[0]._id,

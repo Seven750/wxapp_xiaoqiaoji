@@ -1,0 +1,8 @@
+<wux-toptips id="wux-toptips" />
+<wux-select id="selectyear" />
+<view class="container">
+    <wux-cell-group class="hd">
+    <wux-cell title="选择年份" extra="{{ title }}" is-link bind:click="onchangeyear"></wux-cell>
+  </wux-cell-group>
+  <ff-canvas id="dodge-dom" canvas-id="dodge" opts="{{ opts }}"></ff-canvas>
+</view>

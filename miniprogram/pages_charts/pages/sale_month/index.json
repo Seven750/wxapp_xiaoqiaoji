@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "全年销售数据",
+  "usingComponents": {
+    "ff-canvas": "../../../dist/f2-canvas/f2-canvas",
+    "wux-toptips": "../../../miniprogram_npm/wux-weapp/toptips/index",
+    "wux-select": "../../../miniprogram_npm/wux-weapp/select/index",
+    "wux-cell": "../../../miniprogram_npm/wux-weapp/cell/index"
+  },
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": true
+}

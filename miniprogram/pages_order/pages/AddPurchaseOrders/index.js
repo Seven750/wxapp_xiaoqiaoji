@@ -223,8 +223,9 @@ Page({
           }
           else {
             var newobj = [];
-            for (let i = 0; i < value.length; i++) {
-              const neworder_good = order_good.filter(function (cell) {
+            for (let i = 0; i < value.length; i++) 
+            {
+              const neworder_good = order_good.filter(function(cell){
                 return (cell.value == value[i])
               })
               if (neworder_good != "")
@@ -241,7 +242,12 @@ Page({
           order_good = [];
         this.setData({
           goodvalue: value,
-          GoodName: index.map((n) => options[n].GoodName),
+          GoodName: index.map((n) => {
+            let arr = {}
+            arr.GoodName = options[n].GoodName
+            arr.Unit = options[n].GoodUnit
+            return arr
+          }),
           title: "已选" + value.length + "个货物",
         }, () => console.log(that.data.GoodName))
         var total_amount = 0

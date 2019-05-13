@@ -1,54 +1,101 @@
 <wux-toptips id="wux-toptips" />
 <wux-select id="wux-select" />
 <view class='page'>
-  <view class='page_body' disabled="true">
-    <wux-cell-group>
-            <wux-cell>
-                <wux-input label="货物名称" bind:blur='GetGoodName'disabled="{{status}}" value='{{GoodName}}' controlled = "true"/>
-            </wux-cell>
-            <wux-cell wx:if="{{!status}}" title="货物单位" extra="{{ GoodUnit }}" is-link bind:click="onchooseUnit"></wux-cell>
-            <wux-cell>
-                <wux-input label="销售单价" type='digit' bind:blur="GetGoodSalPrice" disabled="{{status}}" value='{{GoodPrice}}' controlled = "true">
-                 <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit }}</view>
-                 <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
-                </wux-input>
-            </wux-cell>
-            <wux-cell>
-                <wux-input label="进货单价" type='digit' bind:blur="GetGoodPurPrice" disabled="{{status}}" value='{{GoodPrice}}' controlled = "true">
-                 <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit}}</view>
-                 <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
-                </wux-input>
-            </wux-cell>
-            <wux-cell>
-                <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription" disabled="{{status}}" value='{{GoodDescription}}' controlled = "true"/>
-            </wux-cell>
-            <wux-cell>
-                <wux-input label="目前货物库存" type='number' bind:blur="GetGoodReserve" disabled="{{status}}" value='{{GoodReserve}}' controlled = "true">
-                 <view slot="footer" wx:if="{{!status}}">{{ GoodUnit }}</view>
-                 <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
-                </wux-input>
-            </wux-cell>
-            <wux-cell wx:if="{{localfiles!=''}}">
-              <view class="weui-uploader">
-                <view class="weui-uploader__hd">
-                    <view class="weui-uploader__title">图片上传</view>
-                    <view class="weui-uploader__info">{{localfiles.length}}/4</view>
+  <view class="page__hd" wx:if="{{status}}">
+    <view class="page__title">{{GoodName}}</view>
+    <view class="page__desc">该货物信息如下：</view>
+  </view>
+  <view class="page__hd" wx:if="{{!status}}">
+    <view class="page__title">修改</view>
+    <view class="page__desc">修改完记得保存哦</view>
+  </view>
+  <view class='page_body' >
+    <wux-cell-group wx:if="{{!status}}">
+      <wux-cell>
+          <wux-input label="货物名称" bind:blur='GetGoodName' value='{{GoodName}}' controlled = "true"/>
+      </wux-cell>
+      <wux-cell wx:if="{{!status}}" title="货物单位" extra="{{ GoodUnit }}" is-link bind:click="onchooseUnit"></wux-cell>
+      <wux-cell>
+          <wux-input label="销售单价" type='digit' bind:blur="GetGoodSalPrice"  value='{{GoodPrice}}' controlled = "true">
+            <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit }}</view>
+            <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
+          </wux-input>
+      </wux-cell>
+      <wux-cell>
+          <wux-input label="进货单价" type='digit' bind:blur="GetGoodPurPrice"  value='{{GoodPrice_pur}}' controlled = "true">
+            <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit}}</view>
+            <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
+          </wux-input>
+      </wux-cell>
+      <wux-cell>
+          <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription"  value='{{GoodDescription}}' controlled = "true"/>
+      </wux-cell>
+      <wux-cell>
+          <wux-input label="剩余货物库存" type='number' bind:blur="GetGoodReserve"  value='{{GoodReserve}}' controlled = "true">
+            <view slot="footer" wx:if="{{!status}}">{{ GoodUnit }}</view>
+            <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
+          </wux-input>
+      </wux-cell>
+      <wux-cell wx:if="{{localfiles!=''}}">
+        <view class="weui-uploader">
+          <view class="weui-uploader__hd">
+              <view class="weui-uploader__title">图片上传</view>
+              <view class="weui-uploader__info">{{localfiles.length}}/4</view>
+          </view>
+          <view class="weui-uploader__bd">
+            <block wx:for="{{localfiles}}" wx:key="*this">
+                <view class="weui-uploader__file" bindtap="Open" id="{{item}}">
+                    <wux-image class="weui-uploader__img" src="{{item}}" mode="aspectFit">
+                      <image src="https://image.weilanwl.com/gif/loading-1.gif" slot="loading" style='height:80px;width:80px;'/>
+                    </wux-image>
                 </view>
-                <view class="weui-uploader__bd">
-                  <block wx:for="{{localfiles}}" wx:key="*this">
-                      <view class="weui-uploader__file" bindtap="Open" id="{{item}}">
-                          <image class="weui-uploader__img" src="{{item}}" mode="aspectFit" />
-                      </view>
-                  </block>
-                  <view wx:if="{{localfiles.length<4&&!status}}" class="weui-uploader__files" >
-                    <view class="weui-uploader__input-box">
-                        <view class="weui-uploader__input" bindtap="chooseImage"></view>
-                    </view>
-                  </view>
-                </view>
+            </block>
+            <view wx:if="{{localfiles.length<4&&!status}}" class="weui-uploader__files" >
+              <view class="weui-uploader__input-box">
+                  <view class="weui-uploader__input" bindtap="chooseImage"></view>
               </view>
-            </wux-cell>
-      </wux-cell-group>
+            </view>
+          </view>
+        </view>
+      </wux-cell>
+    </wux-cell-group>
+    <view class="weui-form-preview" wx:if="{{status}}">
+      <view class="weui-form-preview__hd">
+          <view class="weui-form-preview__item">
+              <view class="weui-form-preview__label">剩余货物库存：</view>
+              <view class="weui-form-preview__value_in-hd">{{GoodReserve}}{{ GoodUnit }}</view>
+          </view>
+      </view>
+      <view class="weui-form-preview__bd">
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">销售单价</view>
+            <view class="weui-form-preview__value">{{GoodPrice}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">进货价</view>
+            <view class="weui-form-preview__value">{{GoodPrice_pur}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">已销售：</view>
+            <view class="weui-form-preview__value">{{Svolume}}{{GoodUnit}}</view>
+        </view>
+        <view class="weui-form-preview__item">
+            <view class="weui-form-preview__label">描述信息：</view>
+            <view class="weui-form-preview__value">{{GoodDescription}}</view>
+        </view>
+        <view class="weui-uploader" >
+          <view class="weui-uploader__bd">
+            <block wx:for="{{localfiles}}" wx:key="*this">
+                <view class="weui-uploader__file" bindtap="PreviewImage" id="{{item}}">
+                    <wux-image class="weui-uploader__img" src="{{item}}" mode="aspectFit">
+                      <image src="https://image.weilanwl.com/gif/loading-1.gif" slot="loading" />
+                    </wux-image>
+                </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
   <view class='footer_tabbar'>
       <i-button bind:click="onModify" type="info" shape="circle" size="small" wx:if="{{status}}">修改</i-button>
