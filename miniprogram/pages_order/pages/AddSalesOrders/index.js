@@ -149,12 +149,15 @@ Page({
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
-        console.log(res)
-        const path = res.tempFilePaths[0];
-        const cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/)
-        var json = { src: cloudPath, fileID: "" }
+        let Files = []
+        for (let i = 0; i < res.tempFilePaths.length; i++) {
+          let path = res.tempFilePaths[i];
+          let cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/);
+          let json = { src: cloudPath, fileID: "" }
+          Files = Files.concat(json)
+        }
         that.setData({
-          Files: that.data.Files.concat(json),
+          Files: Files,
           localfiles: that.data.localfiles.concat(res.tempFilePaths)
         });
       }
@@ -487,13 +490,11 @@ Page({
     })
   },
   Getdepositnum: function (e) {
-    var depositnum = e.detail.value;
+    const that = this
+    let depositnum = e.detail.value;
     if(depositnum == "") depositnum =0; 
-    var total_amount = 0
-    if (this.data.depositnum==0)
+    let total_amount = 0
       total_amount = parseInt(this.data.total_amount) -parseInt(depositnum)
-    else
-      total_amount = parseInt(this.data.total_amount) +parseInt(this.data.depositnum)  -parseInt(depositnum)
     if(total_amount<0)
     {
       const text = '预付金额大于总订单需支付金额';
@@ -506,6 +507,7 @@ Page({
     this.setData({
       depositnum_errstatus:false,
       depositnum: parseInt(depositnum),
+      after_deposit:total_amount,   
       after_disc_rem_total:total_amount,
       after_disc_total: total_amount
     })

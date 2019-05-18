@@ -34,7 +34,7 @@
     </navigator>
   </view>
   <wux-cell-group title="   ">
-    <wux-cell title="设置" is-link url="../../pages_person/pages/setting/index" open-type="navigateTo"></wux-cell>
+    <wux-cell title="设置" is-link url="../../pages_person/pages/setting/index?_openid='{{_openid}}'" open-type="navigateTo"></wux-cell>
   </wux-cell-group>
   <view class="weui-footer weui-footer_fixed-bottom">
       <view class="weui-footer__text">联系方式:aeaioum@163.com</view>

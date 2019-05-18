@@ -17,14 +17,12 @@
       <wux-cell wx:if="{{!status}}" title="货物单位" extra="{{ GoodUnit }}" is-link bind:click="onchooseUnit"></wux-cell>
       <wux-cell>
           <wux-input label="销售单价" type='digit' bind:blur="GetGoodSalPrice"  value='{{GoodPrice}}' controlled = "true">
-            <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit }}</view>
-            <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
+            <view slot="footer" >元/{{GoodUnit }}</view>
           </wux-input>
       </wux-cell>
       <wux-cell>
           <wux-input label="进货单价" type='digit' bind:blur="GetGoodPurPrice"  value='{{GoodPrice_pur}}' controlled = "true">
-            <view slot="footer" wx:if="{{!status}}">￥/{{GoodUnit}}</view>
-            <view slot="footer" wx:if="{{status}}">￥/{{GoodUnit}}</view>
+            <view slot="footer" >元/{{GoodUnit}}</view>
           </wux-input>
       </wux-cell>
       <wux-cell>
@@ -36,7 +34,7 @@
             <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
           </wux-input>
       </wux-cell>
-      <wux-cell wx:if="{{localfiles!=''}}">
+      <wux-cell>
         <view class="weui-uploader">
           <view class="weui-uploader__hd">
               <view class="weui-uploader__title">图片上传</view>
@@ -69,11 +67,11 @@
       <view class="weui-form-preview__bd">
         <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">销售单价</view>
-            <view class="weui-form-preview__value">{{GoodPrice}}</view>
+            <view class="weui-form-preview__value">{{GoodPrice}} 元</view>
         </view>
         <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">进货价</view>
-            <view class="weui-form-preview__value">{{GoodPrice_pur}}</view>
+            <view class="weui-form-preview__value">{{GoodPrice_pur}} 元</view>
         </view>
         <view class="weui-form-preview__item">
             <view class="weui-form-preview__label">已销售：</view>

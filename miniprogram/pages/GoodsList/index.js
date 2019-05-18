@@ -13,46 +13,57 @@ Page({
       text: '暂时无数据,请先添加货物信息',
     },
   },
-  onLoad() {
-    if(this.data.alphabet=="")
-    {
-      this.getGoodsList();
-    }
+  onLoad:function() {
+    this.getGoodsList();
   },
   onShow(){
 
   },
   getGoodsList:function(){
-
     var that = this;
     wx.showLoading({
       title: '正在加载',
     })
-    const alphabet = [];
+    let name=[]
+    const db = wx.cloud.database();
+    var alphabet = [];
     const list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#';
-    //从云函数中拿到属于用户自己的数据
-    wx.cloud.callFunction({
-      name: "GetGoodsList",
-      data: {
-      },
-      success: res => {
-        console.log(res);
-        if(res.result=="无记录"){
+    db.collection("Goods").count().then(res=>{
+      const times =parseInt(res.total/20)+1;
+      db.collection("Goods").field({
+        GoodName:true
+      }).get().then(res=>{
+        console.log(res)
+        if(res.data=="")
+        {
           that.setData({
-            status:false
-          }, () => wx.hideLoading())
-
+            status: false
+          }, () => {
+            wx.hideLoading()
+          })
         }
         else{
-          const goodsname = res.result;
+          for (let m = 0; m < res.data.length; m++) 
+            name.push(res.data[m].GoodName)
+          for (let i = 1; i < times; i++) {
+            db.collection("Goods").field({
+              GoodName: true
+            }).get().then(res => {
+              let name2 = []
+              if (res.data != "")
+                 for(let m = 0;m<res.data.length;m++) 
+                    name.push(res.data[m].GoodName)
+              name = name.concat(name2)
+            })
+          }
           that.setData({
-            names: goodsname,
+            names: name,
           }, function () {
             //每个字母都循环的比较goodsname里面是否有符合的
             list.split('').forEach((initial) => {
               //如果是#字符的话，将符号开头的都放在#类里面
               if (initial == "#") {
-                const cells = goodsname.filter(function (name) {
+                const cells = name.filter(function (name) {
                   const P = pinyin.convertToPinyin(name).toUpperCase().charAt(0)
                   return !(/[a-zA-z]/.test(P))
                 })
@@ -65,7 +76,7 @@ Page({
                   return;
                 }
               } else {
-                const cells = goodsname.filter(function (name) {
+                const cells = name.filter(function (name) {
                   return pinyin.convertToPinyin(name).toUpperCase().charAt(0) == initial
                 })
                 if (cells != "")
@@ -79,15 +90,12 @@ Page({
                 }
               }
             })
-
             this.setData({
               alphabet,
             }, () => wx.hideLoading())
           })
         }
-      },
-      fail: err => console.log(err),
-      conplete: () => console.log(1)
+      })
     })
   },
   onChange:function(e) {

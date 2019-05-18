@@ -20,7 +20,7 @@ Page({
     removalvalue: "",
     removaloptions: ["不抹零", "抹小数", "抹个位", "抹十位", "抹百位", "抹千位"],
     discount: "无折扣",
-    discountvalue: "",
+    discountvalue: "0",
     discountoptions: [],
     payvalue: "",
     after_disc_total: 0,
@@ -32,30 +32,32 @@ Page({
     var discountoptions =[];
     db.collection("data_status").field({
       discountoptions:true
-    }).get().then(res => discountoptions=res.data[0].discountoptions)
-    db.collection('Order').doc(options.orderid).get().then((res)=>{
-      console.log(res.data)
-      if(res.data.Files!="")
-      {
-        const pic = res.data.Files;
-        const picfiles = []
-        for (let i = 0; i < pic.length; i++) {
-          const pic_src = pic[i].fileID
-          picfiles.push(pic_src)
+    }).get().then(res => {
+      discountoptions=res.data[0].discountoptions
+    },()=>{
+      db.collection('Order').doc(options.orderid).get().then((res) => {
+        console.log(res.data)
+        if (res.data.Files != "") {
+          const pic = res.data.Files;
+          const picfiles = []
+          for (let i = 0; i < pic.length; i++) {
+            const pic_src = pic[i].fileID
+            picfiles.push(pic_src)
+          }
+          that.setData({
+            up_pic_status: true,
+            localfiles: picfiles,
+            Files: res.data.Files,
+          })
         }
         that.setData({
-          up_pic_status:true,
-          localfiles: picfiles,
-          Files: res.data.Files,
+          orderDescription: res.data.orderDescription,
+          after_disc_total: res.data.after_disc_rem_total,
+          after_disc_rem_total: res.data.after_disc_rem_total,
+          discountoptions: discountoptions,
+          depositnum: res.data.depositnum,
+          _id: options.orderid
         })
-      }
-      that.setData({
-        orderDescription: res.data.orderDescription,
-        after_disc_total:res.data.after_disc_rem_total,
-        after_disc_rem_total: res.data.after_disc_rem_total,
-        discountoptions: discountoptions,
-        depositnum: res.data.depositnum,
-        _id:options.orderid
       })
     })
   },
@@ -69,6 +71,28 @@ Page({
       Files: [],
       localfiles: [],
       up_pic_status: e.detail.value
+    })
+  },
+  chooseImage: function (e) {
+    var that = this;
+    wx.chooseImage({
+      count: 4,
+      sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success: function (res) {
+        // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
+        let Files = []
+        for (let i = 0; i < res.tempFilePaths.length; i++) {
+          let path = res.tempFilePaths[i];
+          let cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/);
+          let json = { src: cloudPath, fileID: "" }
+          Files = Files.concat(json)
+        }
+        that.setData({
+          Files: Files,
+          localfiles: that.data.localfiles.concat(res.tempFilePaths)
+        });
+      }
     })
   },
   Open: function (e) {

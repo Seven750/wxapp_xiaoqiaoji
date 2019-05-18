@@ -7,6 +7,7 @@ Page({
    */
   data: {
     avatarUrl: '../../images/user-unlogin.png',
+    _openid:"",
     userInfo: {},
     stock_text:"暂无",
     deadline_text:"暂无",
@@ -20,7 +21,30 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: function (options){
+    const updateManager = wx.getUpdateManager()
+    updateManager.onCheckForUpdate(function (res) {
+      if(res.hasUpdate==true)
+        updateManager.onUpdateReady(function () {
+          wx.showModal({
+            title: '更新提示',
+            content: '新版本已经准备好，是否重启应用？',
+            success: function (res) {
+              if (res.confirm) {
+                // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                updateManager.applyUpdate()
+              }
+            }
+          })
+        })
+      updateManager.onUpdateFailed(function () {
+        wx.showModal({
+          title: '出现问题',
+          content: '小程序更新出现问题，请检查网络',
+          showCancel: false
+        })
+      })
+    })
     let now = new Date();
     let year = [];
     year.push(now.getFullYear());
@@ -45,8 +69,6 @@ Page({
     db.collection("data_status").get().then(res=>{
       if(res.data=="")
       {
-        let year = now.getFullYear();
-        console.log(year)
         let client = [];
         db.collection("data_status").add({
           data:{
@@ -65,21 +87,17 @@ Page({
       }else
       {
         db.collection('data_status').where({
-          use_year:db.command.in([2019])
+          use_year:db.command.in(year)
         }).field({
           use_year:true
         }).get({
           success:res=>{
             if(res.data==[])
             {
-              db.collection("data_status").field({
-                _id:true
-              }).get().then(res => {
-                db.collection("data_status").doc(res.data[0]._id).update({
-                  data:{
-                    use_year:db.command.unshift(year)
-                  }
-                })
+              db.collection("data_status").doc(res.data[0]._id).update({
+                data:{
+                  use_year:db.command.unshift(year)
+                }
               })
             }
           }
@@ -97,8 +115,11 @@ Page({
     const db = wx.cloud.database();
     db.collection('data_status').field({
       stock:true,
-      deadline_time:true
+      deadline_time:true,
+      _openid:true
     }).get().then(res=>{
+      console.log(res)
+      const _openid=res.data[0]._openid
       if(res.data=="")
         return;
       if(res.data[0].stock!=0)
@@ -107,16 +128,19 @@ Page({
         db.collection("Goods").where({
           GoodReserve: db.command.lte(stock)
         }).get().then(res => {
+          console.log(res)
           if (res.data != "")
             this.setData({
               stock_status:true,
-              stock_text:"新警示"
+              stock_text:"新警示",
+              _openid: _openid
             })
         })
       }else{
         this.setData({
           stock_status: false,
-          stock_text: "暂无"
+          stock_text: "暂无",
+          _openid: _openid
         })
       }
       if(res.data[0].deadline_time!=0)

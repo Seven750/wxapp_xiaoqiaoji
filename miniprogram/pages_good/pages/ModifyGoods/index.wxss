@@ -3,3 +3,17 @@
   left:0;
   right:0;
 }
+.weui-form-preview__label {
+  float: left;
+  margin-right: 1em;
+  min-width: 4em;
+  color: #999999;
+  text-align: justify;
+  text-align-last: justify;
+}
+.weui-form-preview__value {
+  font-size: 1.1em;
+}
+.weui-form-preview__value_in-hd {
+  font-size: 26px;
+}

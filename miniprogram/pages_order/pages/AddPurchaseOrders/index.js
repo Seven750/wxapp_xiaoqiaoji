@@ -65,6 +65,7 @@ Page({
     depositnum_errstatus: false,
     savestatus: false,
     repaymentdate: "选择日期",
+    after_deposit: 0,
     after_disc_total: 0,
     after_disc_rem_total: 0,
     worrygood: ""
@@ -142,12 +143,15 @@ Page({
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
-        console.log(res)
-        const path = res.tempFilePaths[0];
-        const cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/)
-        var json = { src: cloudPath, fileID: "" }
+        let Files = []
+        for (let i = 0; i < res.tempFilePaths.length; i++) {
+          let path = res.tempFilePaths[i];
+          let cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/);
+          let json = { src: cloudPath, fileID: "" }
+          Files = Files.concat(json)
+        }
         that.setData({
-          Files: that.data.Files.concat(json),
+          Files: Files,
           localfiles: that.data.localfiles.concat(res.tempFilePaths)
         });
       }
@@ -526,6 +530,7 @@ Page({
       total_amount += order_good[i].amount
     this.setData({
       total_amount,
+      after_deposit: total_amount,
       after_disc_rem_total: total_amount,
       after_disc_total: total_amount
     })

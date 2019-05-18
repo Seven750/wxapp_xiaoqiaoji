@@ -45,7 +45,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
     this.getGoodsinformation(options.GoodName)
     const that = this
     wx.getStorage({
@@ -93,7 +92,6 @@ Page({
     })
   },
   pickerChange(e) {
-    console.log(e)
     const { value } = e.detail
     const { model } = e.currentTarget.dataset
     const unit = this.data.types[value]
@@ -110,12 +108,15 @@ Page({
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
-        console.log(res)
-        const path = res.tempFilePaths[0];
-        const cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/)
-        var json = { src: cloudPath, fileID: "" }
+        let newfiles = []
+        for (let i = 0; i < res.tempFilePaths.length; i++) {
+          let path = res.tempFilePaths[i];
+          let cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/);
+          let json = { src: cloudPath, fileID: "" }
+          newfiles = newfiles.concat(json)
+        }
         that.setData({
-          newfiles: that.data.newfiles.concat(json),
+          newfiles: newfiles,
           localfiles: that.data.localfiles.concat(res.tempFilePaths)
         });
       }
@@ -128,10 +129,8 @@ Page({
     })
   },
   Remove(e) {
-    console.log("remove",e)
     var that = this;
     const path = e.currentTarget.id;
-    // console.log(path.indexOf("cloud"))
     //如果存在cloud字符串，则说明是云端的图片
     if(path.indexOf("cloud")!=-1)
     {
@@ -144,7 +143,7 @@ Page({
               return localfiles != e.currentTarget.id;
             }),
             ruploadfiles: that.data.ruploadfiles + 1
-      }, () => console.log(that.data.localfiles))
+      })
     }
     else
     {
@@ -195,7 +194,6 @@ Page({
   },
   Open: function (e) {
     var that = this;
-    console.log("opne",e)
     if(that.data.status==false)
     {
       wx.showActionSheet({
@@ -208,7 +206,6 @@ Page({
             }
             else {
               //否则就是删除按钮
-              console.log(e);
               that.Remove(e)
             }
           }
@@ -252,7 +249,6 @@ Page({
       const length_new = that.data.newfiles.length;
       if (length_new == 0) {
         //如果用户没有上传图片，那么就直接上传货物信息
-        console.log(that.data.Files)
         db.collection('Goods').doc(that.data.goodid).set({
           data: {
             GoodName: that.data.GoodName,
@@ -292,23 +288,22 @@ Page({
         //下面的for循环就不会执行
       }
       else{
+        wx.showLoading({
+          title: '正在上传图片',
+        })
         //记录循环已经执行了的次数
         let filestimes = 0
         for (let j = 0; j < length_new; j++) {
+          
           const localfileslength = that.data.localfiles.length
-          console.log("that.data.localfiles", that.data.localfiles.length)
           const cloudPath = that.data.newfiles[j].src;
           const filePath = that.data.localfiles[4 - that.data.ruploadfiles+j];
-          console.log("that.data.uploadFile", that.data.ruploadfiles)
-          console.log("filePath",filePath)
           //作为一个变量，需要拼接字符串来完成
           wx.cloud.uploadFile({
             cloudPath,
             filePath,
             success: res => {
-              console.log('[上传第' + j + '文件] 成功：', res);
               const fID = 'newfiles[' + j + '].fileID'
-              console.log("fID", fID)
               that.setData({
                 [fID]: res.fileID
               })
@@ -325,9 +320,11 @@ Page({
             },
             complete: result => {
               filestimes = filestimes + 1;
-              console.log("filestimes", filestimes)
               //如果文件上传完毕
               if (filestimes == length_new) {
+                wx.showLoading({
+                  title: '正在保存',
+                })
                 //说明所有文件都上传完毕了
                 const newFiles = that.data.Files;
                 for (let i = 0; i < that.data.newfiles.length; i++) {
@@ -387,16 +384,18 @@ Page({
     },()=>{
       if (that.data.goodid != "" || that.data.goodid != null) {
         db.collection("Goods").doc(that.data.goodid).remove().then(function (result) {
-          console.log(that.data.localfiles)
-          wx.cloud.deleteFile({
-            fileList: that.data.localfiles,
-            success: res => {
-              console.log(res)
-            },
-            fail: err => {
-              console.error(err)
-            }
-          })
+          if(that.data.localfiles!="")
+          {
+            wx.cloud.deleteFile({
+              fileList: that.data.localfiles,
+              success: res => {
+                console.log(res)
+              },
+              fail: err => {
+                console.error(err)
+              }
+            })
+          }
           if (result.stats.removed == 1) {
             wx.showToast({
               title: '删除成功',
@@ -439,14 +438,12 @@ Page({
     db.collection("Goods").where({
       GoodName: name
     }).get().then(res => {
-      console.log("GetGoodsInformation", res.data[0])
       const pic = res.data[0].Files;
       const picfiles = []
       for (let i = 0; i < pic.length; i++) {
         const pic_src = pic[i].fileID
         picfiles.push(pic_src)
       }
-
       if (res.data[0].GoodDescription == "")
         var des = "无"
       else
@@ -470,7 +467,6 @@ Page({
         ruploadfiles:4-pic.length
       }, () =>{
         wx.hideLoading()
-        console.log("Files",that.data.Files)
       })
 
     }).catch(err=>{

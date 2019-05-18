@@ -35,6 +35,7 @@
             </view>
             <view class="weui-form-preview__item">
                 <view class="weui-form-preview__label">订单货物：</view>
+                <view><text decode="{{true}}" >&nbsp;</text></view>
                 <block wx:for="{{item.order_good}}" wx:key="">
                 <view class="weui-form-preview__value">{{item.GoodName}}：{{item.valueunit}}{{item.GoodUnit}}<text decode='true'>&nbsp;&nbsp;</text>共计：{{item.amount}}元</view>
                 </block>

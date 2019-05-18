@@ -28,7 +28,6 @@ Page({
     db.collection("data_status").field({
       goodUnit:true
     }).get().then(res=>{
-      console.log(res)
       const types = res.data[0].goodUnit;
       if(types!="")
       {
@@ -63,20 +62,22 @@ Page({
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片      
-        console.log(res)
-        const path = res.tempFilePaths[0];
-        const cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/)
-        var json={src:cloudPath,fileID:""}
+        let Files=[]
+        for(let i =0;i<res.tempFilePaths.length;i++)
+        {
+          let path = res.tempFilePaths[i];
+          let cloudPath = 'my-image' + path.replace(/[^0-9]/ig, "") + path.match(/\.[^.]+?$/);
+          let json = { src: cloudPath, fileID: "" }
+          Files = Files.concat(json)
+        }
         that.setData({
-          Files:that.data.Files.concat(json),
+          Files:Files,
           localfiles:that.data.localfiles.concat(res.tempFilePaths)
         });
       }
     })
   },
   PreviewImage: function (e) {
-    console.log(e.currentTarget.id);
-    console.log(this.data.localfiles);
     wx.previewImage({
       current: e.currentTarget.id, // 当前显示图片的http链接
       urls: this.data.localfiles // 需要预览的图片http链接列表
@@ -138,7 +139,6 @@ Page({
           }
           else{
             //否则就是删除按钮
-            console.log(e);
             that.Remove(e)
           }
         }
@@ -197,12 +197,10 @@ Page({
         title: '正在保存',
         mask:true
       })
-      console.log(that.data.localfiles)
       const length = that.data.localfiles.length;
       if(length==0)
       {
         //如果用户没有上传图片，那么就直接上传货物信息
-        console.log(that.data.Files)
         db.collection('Goods').add({
           data: {
             GoodName: that.data.GoodName,
@@ -240,10 +238,12 @@ Page({
       }
       else
       {
+        wx.showLoading({
+          title: '正在上传图片',
+        })
         //记录循环已经执行了的次数
         let filestimes = 0
         for (let j = 0; j < length; j++) {
-          
           //上传的文件大小不同，会异步处理上传，文件越大的上传越慢，但是在大文件的上传同时，小文件已经上传完毕了
           const cloudPath = that.data.Files[j].src;
           const filePath = that.data.localfiles[j];
@@ -252,9 +252,7 @@ Page({
             cloudPath,
             filePath,
             success: res => {
-              console.log('[上传第' + j + '文件] 成功：', res);
               const fID = 'Files[' + j + '].fileID'
-              console.log("fID", fID)
               that.setData({
                 [fID]: res.fileID
               })
@@ -270,9 +268,10 @@ Page({
             },
             complete:result =>{
               filestimes = filestimes + 1;
-              console.log("filestimes", filestimes)
               if (filestimes == length) {
-                console.log("11111111111", that.data.Files)
+                wx.showLoading({
+                  title: '正在上传信息',
+                })
                 db.collection('Goods').add({
                   data: {
                     GoodName: that.data.GoodName,
@@ -331,7 +330,6 @@ Page({
       showCancel: false,
       success: function (res) {
         if (res.confirm) {
-          console.log('用户点击确定')
           wx.navigateBack({
             delta:1
           })

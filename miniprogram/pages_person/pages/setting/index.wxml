@@ -11,5 +11,8 @@
   <wux-cell-group>
     <wux-cell title="最低库存警示" is-link url="../setting_detail/index?detail=stock" open-type="navigateTo"></wux-cell>
   </wux-cell-group>
+  <wux-cell-group title="   ">
+    <wux-cell title="删除全部数据" bind:click="delete_persosn_message"></wux-cell>
+  </wux-cell-group>
   
 </view>

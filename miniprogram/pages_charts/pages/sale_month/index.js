@@ -166,6 +166,7 @@ Page({
     db.collection("data_status").field({
       use_year: true
     }).get().then(res => {
+      console.log(res)
       that.setData({
         year_options: res.data[0].use_year,
         yearvalue: res.data[0].use_year[0],
