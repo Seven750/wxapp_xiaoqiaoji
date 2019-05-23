@@ -21,7 +21,7 @@
                 <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription"/>
             </wux-cell>
             <wux-cell>
-                <wux-input label="目前货物库存" type='number' bind:blur="GetGoodReserve">
+                <wux-input label="目前货物库存" type='digit' bind:blur="GetGoodReserve">
                  <view slot="footer" wx:if="{{GoodUnit!='请选择'}}">{{ GoodUnit }}</view>
                 </wux-input>
             </wux-cell>

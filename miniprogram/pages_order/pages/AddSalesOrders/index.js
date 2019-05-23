@@ -209,6 +209,10 @@ Page({
   },
   onchangegood() {
     const that = this;
+    if (this.data.options == "" || this.data.options == null) {
+      that.tipsmessage("请先在货物列表中添加货物")
+      return
+    }
     $wuxSelect('#selectgood').open({
       value: this.data.goodvalue,
       multiple: true,
@@ -550,8 +554,10 @@ Page({
   onAdd: function () {
     var status_success=1;
     var that = this;
-    if (that.data.orderID == "" || that.data.orderID == null) {
-      that.tipsmessage("请先填写订单号")
+    console.log(order_good)
+    if (that.data.orderID == "" || that.data.orderID == null || isNaN(this.data.orderID)) {
+      that.tipsmessage("请先填写订单号(纯数字)")
+      return;
     }
     if (that.data.clientname == "" || that.data.clientname == null) {
       that.tipsmessage("请先填写客户名")
@@ -584,6 +590,8 @@ Page({
           that.tipsmessage(text)
           break;
         }
+        if (order_good[t].valueunit=0)
+          that.tipsmessage("请输入" + order_good[t].GoodName+"的售出量")
       }
       if(status !=0)
         return;

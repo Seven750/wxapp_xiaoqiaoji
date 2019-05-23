@@ -197,6 +197,9 @@ Page({
         title: '正在保存',
         mask:true
       })
+      let GoodReserve = 0;
+      if(that.data.GoodReserve!="")
+        GoodReserve = parseInt(that.data.GoodReserve)
       const length = that.data.localfiles.length;
       if(length==0)
       {
@@ -207,7 +210,7 @@ Page({
             GoodPrice: parseInt(that.data.GoodPrice),
             GoodPrice_pur:parseInt(that.data.GoodPrice_pur),
             GoodDescription: that.data.GoodDescription,
-            GoodReserve:parseInt(that.data.GoodReserve),
+            GoodReserve: GoodReserve,
             GoodUnit: that.data.GoodUnit,
             Svolume: 0,
             Files: that.data.Files
@@ -278,7 +281,7 @@ Page({
                     GoodPrice: parseInt(that.data.GoodPrice),
                     GoodPrice_pur: parseInt(that.data.GoodPrice_pur),
                     GoodDescription: that.data.GoodDescription,
-                    GoodReserve: parseInt(that.data.GoodReserve),
+                    GoodReserve:GoodReserve,
                     GoodUnit: that.data.GoodUnit,
                     Svolume: 0,
                     Files: that.data.Files

@@ -8,7 +8,6 @@ Page({
     opts:{
     },
     status:false,
-    yearvalue: "",
     index: 0,
     year_options: [],
     title: "",
@@ -88,9 +87,6 @@ Page({
     }, 1500)
   },
   onShow:function(){
-    const that = this;
-    
-    
   },
   initChart:function(canvas, width, height) {
     const that = this;
@@ -253,32 +249,39 @@ Page({
       },
       onConfirm: (value, index, options) => {
         console.log('onConfirm', value, index, options)
-        wx.showLoading({
-          title: '正在加载',
-        })
-        that.get_allyear_data(value)
-        that.setData({
-          title:value,
-          yearvalue:value,
-          index: index,
-        },()=>{
-          that.ecComponent = that.selectComponent(' #dodge-dom');
-          setTimeout(function () {
-            that.setData({
-              opts: {
-                onInit: that.initChart
-              }
-            }, () => {
-              that.ecComponent.init(that.initChart);
-            })
-            wx.hideLoading()
-          }, 1000)
-        })
+        
       },
       onCancel: (e) => {
         $wuxSelect('#selectyear').close()
       }
     })
+  },
+  bindPickerChange:function(e){
+    const that = this;
+    const value= that.data.year_options[e.detail.value]
+    if(e.detail.value!=null||e.detail.value!="")
+    {
+      wx.showLoading({
+        title: '正在加载',
+      })
+      that.get_allyear_data(value)
+      that.setData({
+        title: value,
+        index: e.detail.value,
+      }, () => {
+        that.ecComponent = that.selectComponent(' #dodge-dom');
+        setTimeout(function () {
+          that.setData({
+            opts: {
+              onInit: that.initChart
+            }
+          }, () => {
+            that.ecComponent.init(that.initChart);
+          })
+          wx.hideLoading()
+        }, 1000)
+      })
+    }
   },
   tipsmessage: function (text) {
     $wuxToptips().success({

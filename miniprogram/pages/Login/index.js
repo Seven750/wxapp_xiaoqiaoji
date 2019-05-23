@@ -43,7 +43,6 @@ Page({
       name: 'login',
       data: {},
       success: res => {
-        console.log('[云函数] [login] user openid: ', res.result.openid);
         wx.switchTab({
           url: '../Person/index'
         })

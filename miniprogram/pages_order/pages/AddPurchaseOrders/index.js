@@ -203,6 +203,11 @@ Page({
   },
   onchangegood() {
     const that = this;
+    if (this.data.options==""||this.data.options==null)
+    {
+      that.tipsmessage("请先在货物列表中添加货物")
+      return 
+    }
     $wuxSelect('#selectgood').open({
       value: this.data.goodvalue,
       multiple: true,
@@ -572,14 +577,14 @@ Page({
       for (let t = 0; t < order_good.length; t++) {
         if (order_good[t].valueunit > order_good[t].GoodReserve) {
           status++;
-          $wuxToptips().show({
-            icon: 'cancel',
-            hidden: false,
-            text: order_good[t].GoodName + '已超出目前' + order_good[t].GoodReserve + order_good[t].GoodUnit + "的库存量",
-            duration: 2000,
-            success() { },
-          })
+          const text = order_good[t].GoodName + '已超出目前' + order_good[t].GoodReserve + order_good[t].GoodUnit + "的库存量"
+          that.tipsmessage(text)
           break;
+        }
+        if (order_good[t].valueunit = 0)
+        {
+          status++;
+          that.tipsmessage("请输入" + order_good[t].GoodName + "的售出量")
         }
       }
       console.log(status)

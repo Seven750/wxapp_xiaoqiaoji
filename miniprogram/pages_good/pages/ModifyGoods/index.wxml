@@ -29,7 +29,7 @@
           <wux-textarea label="货物描述" placeholder="最多输入一百个字" maxlength="100" autoHeight="true" bind:blur="GetGoodsDescription"  value='{{GoodDescription}}' controlled = "true"/>
       </wux-cell>
       <wux-cell>
-          <wux-input label="剩余货物库存" type='number' bind:blur="GetGoodReserve"  value='{{GoodReserve}}' controlled = "true">
+          <wux-input label="剩余货物库存" type='digit' bind:blur="GetGoodReserve"  value='{{GoodReserve}}' controlled = "true">
             <view slot="footer" wx:if="{{!status}}">{{ GoodUnit }}</view>
             <view slot="footer" wx:if="{{status}}">{{GoodUnit}}</view>
           </wux-input>

@@ -72,7 +72,7 @@ Page({
         let client = [];
         db.collection("data_status").add({
           data:{
-            goodUnit: ['个','斤','100个','千克','吨',"打","平方米","米"],
+            goodUnit: ['个','斤','千克','吨',"打","平方米","米"],
             orderID:0,
             discountoptions: ["无折扣", "9折", "8折"],
             client:client,
